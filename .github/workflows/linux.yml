@@ -26,7 +26,7 @@ jobs:
       run: |
         mkdir -p $PWD/install
         echo "PARFLOW_DIR=$PWD/install" >> $GITHUB_ENV
-        echo "Setting PARFLOW_DIR=$PWD/install
+        echo "Setting PARFLOW_DIR=$PWD/install"
 
     - name: CMake Install
       run: |
