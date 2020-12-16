@@ -23,7 +23,7 @@ jobs:
       run: sudo apt install gfortran libhdf5-openmpi-dev libhdf5-openmpi-100 hdf5-helpers tcl-dev tk-dev
       
     - name: CMake install
-      run : |
+      run: |
         echo "hi"
 	echo "bye"
 
