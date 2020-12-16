@@ -13,12 +13,16 @@ jobs:
         - {
             name: "Ubuntu Latest - GCC", artifact: "linux-gcc.tar.xz",
             os: ubuntu-18.04,
-            cc: "gcc", cxx: "g++"
+            cc: "gcc", cxx: "g++",
+	    python: "false",
+    	    backend: "none"	
           }
         - {
             name: "Ubuntu 18.04", artifact: "linux-gcc.tar.xz",
             os: ubuntu-18.04,
-            cc: "gcc", cxx: "g++"
+            cc: "gcc", cxx: "g++",
+	    python: "false",
+    	    backend: "none"	
           }
     steps:
     - uses: actions/checkout@v2
