@@ -14,22 +14,25 @@ jobs:
             name: "Ubuntu 18.04", artifact: "linux-gcc.tar.xz",
             os: ubuntu-18.04,
             cc: "gcc", cxx: "g++"
+ 	    env:
+	      PF_ACC_BACKEND:none
+	      PF_PYTHON:true
           }
         - {
             name: "Ubuntu 18.04 Python"
             os: ubuntu-18.04,
             cc: "gcc", cxx: "g++"
 	    env:
-	      - PF_ACC_BACKEND=none
-	      - PF_PYTHON=true
+	      PF_ACC_BACKEND:none
+	      PF_PYTHON:true
           }
         - {
             name: "Ubuntu 16.04"
             os: ubuntu-16.04,
             cc: "gcc", cxx: "g++"
 	    env:
-	      - PF_ACC_BACKEND=none
-	      - PF_PYTHON=false
+	      PF_ACC_BACKEND:none
+	      PF_PYTHON:false
           }
 
     steps:
