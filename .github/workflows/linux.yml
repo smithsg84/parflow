@@ -12,24 +12,10 @@ jobs:
         config:
         - {
             name: "Ubuntu 18.04"
-            os: ubuntu-18.04,
+            os: ubuntu-18.04
             cc: "gcc", cxx: "g++"
-            backend: none
-            python: false
-          }
-        - {
-            name: "Ubuntu 18.04 Python"
-            os: ubuntu-18.04,
-            cc: "gcc", cxx: "g++"
-            backend: none
-            python: true
-          }
-        - {
-            name: "Ubuntu 16.04"
-            os: ubuntu-16.04,
-            cc: "gcc", cxx: "g++"
-            backend: none
-            python: false
+            backend: "none"
+            python: "false"
           }
 
     steps:
