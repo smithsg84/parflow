@@ -50,7 +50,7 @@ jobs:
         echo "$PWD/cmake-3.14.0-Linux-x86_64/bin/" >> $GITHUB_PATH
 
     - name: CUDA Install
-      if matrix.config.backend == 'cuda'
+      if: matrix.config.backend == 'cuda'
       run: |
         CUDA_SHORT=10.1
 	CUDA_VER=10.1.105-1
@@ -65,7 +65,7 @@ jobs:
         echo "${CUDA_HOME}/bin" >> $GITHUB_PATH
 
     - name: UCX
-      if matrix.config.backend == 'cuda'
+      if: matrix.config.backend == 'cuda'
       run: |
         sudo apt install -y autoconf automake libtool
         wget https://github.com/openucx/ucx/releases/download/v1.8.0-rc1/ucx-1.8.0.tar.gz
@@ -75,7 +75,7 @@ jobs:
 	make install
 
     - name: OpenMPI Install for CUDA
-      if matrix.config.cc == 'cuda'
+      if: matrix.config.cc == 'cuda'
       run: |
         wget https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.3.tar.gz
 	tar -xf openmpi-4.0.3.tar.gz
@@ -86,7 +86,7 @@ jobs:
 	sudo ldconfig
 
     - name: RMM Install
-      if matrix.config.cc == 'cuda'
+      if: matrix.config.cc == 'cuda'
       run: |
         git clone -b branch-0.10 --single-branch --recurse-submodules https://github.com/rapidsai/rmm.git
 	cd rmm
