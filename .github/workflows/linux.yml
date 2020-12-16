@@ -9,12 +9,12 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-      config:
-      - {
-          name: "Ubuntu Latest - GCC", artifact: "linux-gcc.tar.xz",
-          os: ubuntu-18.04,
-          cc: "gcc", cxx: "g++"
-        }
+        config:
+        - {
+            name: "Ubuntu Latest - GCC", artifact: "linux-gcc.tar.xz",
+            os: ubuntu-18.04,
+            cc: "gcc", cxx: "g++"
+          }
 
     steps:
     - uses: actions/checkout@v2
