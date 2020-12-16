@@ -25,7 +25,7 @@ jobs:
     - name: CMake install
       run : |
         if [[ ! -f cmake-3.14.0-Linux-x86_64/bin/cmake ]]; then 
-      	  wget --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz && tar -xf cmake-3.14.0-Linux-x86_64.tar.gz; 
+      	  wget --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz && tar -xf cmake-3.14.0-Linux-x86_64.tar.gz
         fi
         echo "$(pwd)/cmake-3.14.0-Linux-x86_64/bin/" >> $GITHUB_PATH
 	
