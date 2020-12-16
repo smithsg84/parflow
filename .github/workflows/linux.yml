@@ -11,12 +11,9 @@ jobs:
       matrix:
         config:
         - {
-            name: "Ubuntu 18.04"
+            name: "Ubuntu 18.04", artifact: "linux-gcc.tar.xz",
             os: ubuntu-18.04,
             cc: "gcc", cxx: "g++"
-	    env:
-	      - PF_ACC_BACKEND=none
-	      - PF_PYTHON=false
           }
         - {
             name: "Ubuntu 18.04 Python"
