@@ -11,20 +11,6 @@ jobs:
       matrix:
         config:
         - {
-            name: "Ubuntu 18.04", artifact: "linux-gcc.tar.xz",
-            os: ubuntu-18.04,
-            cc: "gcc", cxx: "g++",
-            python: "false",
-            backend: "none",
-          }
-        - {
-            name: "Ubuntu 18.04 Python", artifact: "linux-gcc.tar.xz",
-            os: ubuntu-18.04,
-            cc: "gcc", cxx: "g++",
-            python: "true",
-            backend: "none"     
-          }
-        - {
             name: "Ubuntu 18.04 CUDA", artifact: "linux-gcc.tar.xz",
             os: ubuntu-18.04,
             cc: "gcc", cxx: "g++",
@@ -60,7 +46,7 @@ jobs:
         sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/${{ matrix.config.cudaos }}/x86_64/7fa2af80.pub
         sudo apt update -qq
         sudo apt install -y cuda-core-${CUDA_SHORT/./-} cuda-cudart-dev-${CUDA_SHORT/./-} cuda-nvtx-${CUDA_SHORT/./-}
-        echo "CUDA_HOME=/usr/local/cuda-${CUDA_SHORT} >> $GITHUB_ENV
+        echo "CUDA_HOME=/usr/local/cuda-${CUDA_SHORT}" >> $GITHUB_ENV
         echo "LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}" >> $GITHUB_ENV
         echo "LIBRARY_PATH=${CUDA_HOME}/lib64/stubs" >> $GITHUB_ENV
         echo "${CUDA_HOME}/bin" >> $GITHUB_PATH
