@@ -9,36 +9,35 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        config:
-        - {
-            name: "Ubuntu Latest - GCC", artifact: "linux-gcc.tar.xz",
-            os: ubuntu-18.04,
-            cc: "gcc", cxx: "g++"
-          }
+      config:
+      - {
+          name: "Ubuntu Latest - GCC", artifact: "linux-gcc.tar.xz",
+          os: ubuntu-18.04,
+          cc: "gcc", cxx: "g++"
+        }
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Install Linux Dependencies
       run: sudo apt install gfortran libhdf5-openmpi-dev libhdf5-openmpi-100 hdf5-helpers tcl-dev tk-dev
-      
+
     - name: CMake install
       run: |
         echo "hi"
-	echo "bye"
-
+        echo "bye"
 
 # wget --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz
 # tar -xf cmake-3.14.0-Linux-x86_64.tar.gz
 # echo "$(pwd)/cmake-3.14.0-Linux-x86_64/bin/" >> $GITHUB_PATH
 
-#if [[ ! -f cmake-3.14.0-Linux-x86_64/bin/cmake ]]; then 
+#if [[ ! -f cmake-3.14.0-Linux-x86_64/bin/cmake ]]; then
 #
 #        fi
 #        echo "$(pwd)/cmake-3.14.0-Linux-x86_64/bin/" >> $GITHUB_PATH
-	
-    -name: Check
-      run: echo $(which cmake)    
+
+-name: Check
+      run: echo $(which cmake)
 
     - name: CMake Configure
       run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }}  -DCMAKE_C_FLAGS='-Wall -Werror -Wno-unused-result -Wno-unused-function' -DPARFLOW_AMPS_LAYER=mpi1 -DPARFLOW_AMPS_SEQUENTIAL_IO=true -DPARFLOW_HAVE_CLM=ON -DHYPRE_ROOT=$HYPRE_ROOT -DSILO_ROOT=$SILO_ROOT -DCMAKE_INSTALL_PREFIX=$PARFLOW_DIR
