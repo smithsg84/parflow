@@ -15,7 +15,7 @@ jobs:
             os: ubuntu-18.04,
             cc: "gcc", cxx: "g++",
             python: "false",
-            backend: "none"     
+            backend: "none",
           }
         - {
             name: "Ubuntu 18.04 Python", artifact: "linux-gcc.tar.xz",
@@ -29,7 +29,8 @@ jobs:
             os: ubuntu-18.04,
             cc: "gcc", cxx: "g++",
             python: "false",
-            backend: "cuda"     
+            backend: "cuda"
+	    cudaos: 'ubuntu1804'
           }
     steps:
     - uses: actions/checkout@v2
@@ -54,9 +55,9 @@ jobs:
       run: |
         CUDA_SHORT=10.1
         CUDA_VER=10.1.105-1
-        wget http://developer.download.nvidia.com/compute/cuda/repos/${PF_TEST_VER}/x86_64/cuda-repo-${PF_TEST_VER}_${CUDA_VER}_amd64.deb
-        sudo dpkg -i cuda-repo-${PF_TEST_VER}_${CUDA_VER}_amd64.deb;
-        sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/${PF_TEST_VER}/x86_64/7fa2af80.pub
+        wget http://developer.download.nvidia.com/compute/cuda/repos/${{ matrix.config.cudaos }}/x86_64/cuda-repo-${{ matrix.config.cudaos }}_${CUDA_VER}_amd64.deb
+        sudo dpkg -i cuda-repo-${{ matrix.config.cudaos }}_${CUDA_VER}_amd64.deb;
+        sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/${{ matrix.config.cudaos }}/x86_64/7fa2af80.pub
         sudo apt update -qq
         sudo apt install -y cuda-core-${CUDA_SHORT/./-} cuda-cudart-dev-${CUDA_SHORT/./-} cuda-nvtx-${CUDA_SHORT/./-}
         echo "CUDA_HOME=/usr/local/cuda-${CUDA_SHORT} >> $GITHUB_ENV
@@ -111,7 +112,7 @@ jobs:
 
     - name: ParFlow CMake Configure
       run: |
-        if [[ $PF_ACC_BACKEND == 'cuda' ]]; then
+        if [[ '${{ matrix.config.backend }}' == 'cuda' ]]; then
           CUDA_FLAGS='-lcuda'
           RMM_FLAGS="-DRMM_ROOT=$PARFLOW_DIR"
         else
