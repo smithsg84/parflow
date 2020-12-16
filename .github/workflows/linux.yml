@@ -52,7 +52,7 @@ jobs:
         echo "LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}" >> $GITHUB_ENV
         echo "LIBRARY_PATH=${CUDA_HOME}/lib64/stubs" >> $GITHUB_ENV
         echo "${CUDA_HOME}/bin" >> $GITHUB_PATH
-	which nvcc
+        which nvcc
 
     - name: Message
       run: |
