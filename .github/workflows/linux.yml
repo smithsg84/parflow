@@ -1,0 +1,30 @@
+name: Build ParFlow
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        config:
+        - {
+            name: "Ubuntu Latest - GCC", artifact: "linux-gcc.tar.xz",
+            os: ubuntu-18.04,
+            cc: "gcc", cxx: "g++"
+          }
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Linux Dependencies
+      if: runner.os == 'Linux'
+      run: sudo apt install gfortran libhdf5-openmpi-dev libhdf5-openmpi-100 hdf5-helpers tcl-dev tk-dev
+
+    - name: CMake Configure 
+      run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} 
+
+    - name: CMake Build
+      run: cmake --build build
