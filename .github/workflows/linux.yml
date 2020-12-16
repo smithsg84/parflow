@@ -29,6 +29,8 @@ jobs:
         mkdir -p $PWD/install
         echo "PARFLOW_DIR=$PWD/install" >> $GITHUB_ENV
         echo "Setting PARFLOW_DIR=$PWD/install"
+        echo "PARFLOW_DEP_DIR=$PWD/depend" >> $GITHUB_ENV
+        echo "Setting PARFLOW_DEP_DIR=$PWD/depend"
 
     - name: CMake Install
       run: |
@@ -50,66 +52,9 @@ jobs:
         echo "LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}" >> $GITHUB_ENV
         echo "LIBRARY_PATH=${CUDA_HOME}/lib64/stubs" >> $GITHUB_ENV
         echo "${CUDA_HOME}/bin" >> $GITHUB_PATH
+	which nvcc
 
-    - name: UCX
-      if: matrix.config.backend == 'cuda'
+    - name: Message
       run: |
-        sudo apt install -y autoconf automake libtool
-        wget https://github.com/openucx/ucx/releases/download/v1.8.0-rc1/ucx-1.8.0.tar.gz
-        tar -xf ucx-1.8.0.tar.gz
-        cd ucx-1.8.0
-        ./contrib/configure-release --with-cuda=$CUDA_HOME --with-java=no --disable-numa --prefix=$PARFLOW_DIR 
-        make -j 2 install
-
-    - name: OpenMPI Install for CUDA
-      if: matrix.config.cc == 'cuda'
-      run: |
-        wget https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.3.tar.gz
-        tar -xf openmpi-4.0.3.tar.gz
-        cd openmpi-4.0.3
-        ./configure --with-cuda=$CUDA_HOME --with-ucx=$PARFLOW_DIR
-        sudo make -j 2 install
-        cd ..
-        sudo ldconfig
-
-    - name: RMM Install
-      if: matrix.config.cc == 'cuda'
-      run: |
-        git clone -b branch-0.10 --single-branch --recurse-submodules https://github.com/rapidsai/rmm.git
-        cd rmm
-        cmake . -DCMAKE_INSTALL_PREFIX=$PARFLOW_DIR
-        make -j 2 install
-
-    - name: SILO Install
-      run: |
-        wget https://wci.llnl.gov/content/assets/docs/simulation/computer-codes/silo/silo-4.10.2/silo-4.10.2.tar.gz
-        tar -xf silo-4.10.2.tar.gz
-        cd silo-4.10.2
-        ./configure --disable-silex --disable-hzip --disable-fpzip --prefix=$PARFLOW_DIR
-        make -j 2 install 
-
-    - name: HYPRE Install
-      run: |
-        wget https://github.com/hypre-space/hypre/archive/v2.18.2.tar.gz
-        tar -xf v2.18.2.tar.gz 
-        cd hypre-2.18.2/src 
-        ./configure --prefix=$PARFLOW_DIR
-        make -j 2 install
-
-    - name: ParFlow CMake Configure
-      run: |
-        if [[ '${{ matrix.config.backend }}' == 'cuda' ]]; then
-          CUDA_FLAGS=''
-          RMM_FLAGS="-DRMM_ROOT=$PARFLOW_DIR"
-        else
-          CUDA_FLAGS=''
-        fi
-        cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} -DCMAKE_C_FLAGS="-Wall -Werror -Wno-unused-result -Wno-unused-function $CUDA_FLAGS" -DPARFLOW_ENABLE_TIMING=TRUE -DPARFLOW_AMPS_LAYER=mpi1 -DMPIEXEC_POSTFLAGS='--oversubscribe' -DPARFLOW_ACCELERATOR_BACKEND=${{ matrix.config.backend }} -DPARFLOW_AMPS_SEQUENTIAL_IO=true -DPARFLOW_HAVE_CLM=ON -DHYPRE_ROOT=$PARFLOW_DIR -DSILO_ROOT=$PARFLOW_DIR -DPARFLOW_ENABLE_PYTHON=${{ matrix.config.python }} -DPARFLOW_PYTHON_VIRTUAL_ENV=${{ matrix.config.python }} $RMM_FLAGS -DCMAKE_INSTALL_PREFIX=$PARFLOW_DIR
-
-    - name: ParFlow CMake Build
-      run: (cd build; make -j 2 install)
-
-    # Can't test with CUDA
-    - name: ParFlow CTest
-      if: matrix.config.cc != 'cuda'
-      run: (cd build; ctest)
+        echo $PATH
+        which nvcc
