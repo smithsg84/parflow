@@ -15,12 +15,6 @@ jobs:
             os: ubuntu-18.04,
             cc: "gcc", cxx: "g++"
           }
-
-        - {
-            name: "Ubuntu 18.04", artifact: "linux-gcc.tar.xz",
-            os: ubuntu-18.04
-            cc: "gcc", cxx: "g++"
-          }
     steps:
     - uses: actions/checkout@v2
 
