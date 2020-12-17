@@ -21,6 +21,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Package Install 20.04
+      if: matrix.config.os == 'ubuntu-20.04'
+      run: |
+        sudo apt -q install gfortran libhdf5-openmpi-dev libhdf5-openmpi-103 hdf5-helpers tcl-dev tk-dev
+        sudo apt-get -qq update
+
     - name: Package Install 18.04
       if: matrix.config.os == 'ubuntu-18.04'
       run: |
