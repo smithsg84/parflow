@@ -10,7 +10,7 @@ jobs:
       # fail-fast: true
       matrix:
         config:
-       - {
+        - {
             name: "Ubuntu 20.04", artifact: "linux-gcc.tar.xz",
             os: ubuntu-20.04,
             cudaos: 'ubuntu2004',
