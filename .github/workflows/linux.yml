@@ -24,18 +24,34 @@ jobs:
     - name: Package Install
       run: sudo apt install gfortran libhdf5-openmpi-dev libhdf5-openmpi-100 hdf5-helpers tcl-dev tk-dev
 
+    - name: Cache dependencies for CUDA build
+      if: matrix.config.backend == 'cuda'
+      uses: actions/cache@v2
+      id: cache-parflow-cuda-dependencies
+      env:
+        cache-name: cache-parflow-cuda-dependencies
+        cache-parflow-cuda-hit: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
+      with:
+        path: ~/depend
+        key: ${{ runner.os }}-build-${{ env.cache-name }}
+
     - name: Directory Setup
       run: |
         mkdir -p $PWD/install
         echo "PARFLOW_DIR=$PWD/install" >> $GITHUB_ENV
         echo "Setting PARFLOW_DIR=$PWD/install"
+        mkdir -p $PWD/depend
         echo "PARFLOW_DEP_DIR=$PWD/depend" >> $GITHUB_ENV
         echo "Setting PARFLOW_DEP_DIR=$PWD/depend"
 
     - name: CMake Install
+      env:
+        CACHE_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
-        wget --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz
-        tar -xf cmake-3.14.0-Linux-x86_64.tar.gz
+        if [[ "$CACHE_HIT" != 'true' ]]; then
+          wget --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz
+          tar -xf cmake-3.14.0-Linux-x86_64.tar.gz
+        fi
         echo "$PWD/cmake-3.14.0-Linux-x86_64/bin/" >> $GITHUB_PATH
 
     - name: CUDA Install
@@ -55,53 +71,73 @@ jobs:
         export LIBRARY_PATH=${CUDA_HOME}/lib64/stubs
         echo "LIBRARY_PATH=${LIBRARY_PATH}" >> $GITHUB_ENV
         echo "${CUDA_HOME}/bin" >> $GITHUB_PATH
-        echo "CUDA_LINK_FLAGS=\"${CUDA_HOME}/lib64 -lcuda\"" >> $GITHUB_ENV
+        echo "CUDA_LINK_FLAGS=\"-L${CUDA_HOME}/lib64 -lcuda\"" >> $GITHUB_ENV
 
     - name: UCX
       if: matrix.config.backend == 'cuda'
+      env:
+        CACHE_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
-        sudo apt install -y autoconf automake libtool
-        wget https://github.com/openucx/ucx/releases/download/v1.8.0-rc1/ucx-1.8.0.tar.gz
-        tar -xf ucx-1.8.0.tar.gz
-        cd ucx-1.8.0
-        ./contrib/configure-release --with-cuda=$CUDA_HOME --with-java=no --disable-numa --prefix=$PARFLOW_DEP_DIR 
-        make -j 2 install
+        if [[ "$CACHE_HIT" != 'true' ]]; then
+          sudo apt install -y autoconf automake libtool
+          wget https://github.com/openucx/ucx/releases/download/v1.8.0-rc1/ucx-1.8.0.tar.gz
+          tar -xf ucx-1.8.0.tar.gz
+          cd ucx-1.8.0
+          ./contrib/configure-release --with-cuda=$CUDA_HOME --with-java=no --disable-numa --prefix=$PARFLOW_DEP_DIR 
+          make -j 2 install
+        fi
 
     - name: RMM Install
+      env:
+        CACHE_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       if: matrix.config.backend == 'cuda'
       run: |
-        git clone -b branch-0.10 --single-branch --recurse-submodules https://github.com/rapidsai/rmm.git
-        cd rmm
-        cmake . -DCMAKE_INSTALL_PREFIX=$PARFLOW_DEP_DIR
-        make -j 2 install
-        echo "RMM_FLAGS=-DRMM_ROOT=$PARFLOW_DEP_DIR" >> $GITHUB_ENV	
+        if [[ "$CACHE_HIT" != 'true' ]]; then
+          git clone -b branch-0.10 --single-branch --recurse-submodules https://github.com/rapidsai/rmm.git
+          cd rmm
+          cmake . -DCMAKE_INSTALL_PREFIX=$PARFLOW_DEP_DIR
+          make -j 2 install
+        fi
+        echo "RMM_FLAGS=-DRMM_ROOT=$PARFLOW_DEP_DIR" >> $GITHUB_ENV     
 
     - name: OpenMPI Install for CUDA
+      env:
+        CACHE_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       if: matrix.config.backend == 'cuda'
       run: |
-        wget https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.3.tar.gz
-        tar -xf openmpi-4.0.3.tar.gz
-        cd openmpi-4.0.3
-        ./configure --with-cuda=$CUDA_HOME --with-ucx=$PARFLOW_DEP_DIR
-        sudo make -j 2 install
-        cd ..
+        if [[ "$CACHE_HIT" != 'true' ]]; then
+          wget https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.3.tar.gz
+          tar -xf openmpi-4.0.3.tar.gz
+          cd openmpi-4.0.3
+          ./configure --with-cuda=$CUDA_HOME --with-ucx=$PARFLOW_DEP_DIR
+          sudo make -j 2 install
+          cd ..
+        fi
         sudo ldconfig
 
     - name: SILO Install
+      env:
+        CACHE_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
-        wget https://wci.llnl.gov/content/assets/docs/simulation/computer-codes/silo/silo-4.10.2/silo-4.10.2.tar.gz
-        tar -xf silo-4.10.2.tar.gz
-        cd silo-4.10.2
-        ./configure --disable-silex --disable-hzip --disable-fpzip --prefix=$PARFLOW_DEP_DIR
-        make -j 2 install 
+        if [[ "$CACHE_HIT" != 'true' ]]; then
+          wget https://wci.llnl.gov/content/assets/docs/simulation/computer-codes/silo/silo-4.10.2/silo-4.10.2.tar.gz
+          tar -xf silo-4.10.2.tar.gz
+          cd silo-4.10.2
+          ./configure --disable-silex --disable-hzip --disable-fpzip --prefix=$PARFLOW_DEP_DIR
+          make -j 2 install
+        fi
 
     - name: HYPRE Install
+      env:
+        CACHE_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
-        wget https://github.com/hypre-space/hypre/archive/v2.18.2.tar.gz
-        tar -xf v2.18.2.tar.gz 
-        cd hypre-2.18.2/src 
-        ./configure --prefix=$PARFLOW_DEP_DIR
-        make -j 2 install
+        if [[ "$CACHE_HIT" != 'true' ]]; then
+          wget https://github.com/hypre-space/hypre/archive/v2.18.2.tar.gz
+          tar -xf v2.18.2.tar.gz 
+          cd hypre-2.18.2/src 
+          ./configure --prefix=$PARFLOW_DEP_DIR
+          make -j 2 install
+        fi
 
     - name: ParFlow CMake Configure
       run: |
