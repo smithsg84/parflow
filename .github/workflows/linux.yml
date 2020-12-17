@@ -16,18 +16,14 @@ jobs:
             python: "false",
             backend: "none",
           }
-        - {
-            name: "Ubuntu 18.04 Python", artifact: "linux-gcc.tar.xz",
-            os: ubuntu-18.04,
-            python: "true",
-            backend: "none"     
-          }
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Package Install
-      run: sudo apt install gfortran libhdf5-openmpi-dev libhdf5-openmpi-100 hdf5-helpers tcl-dev tk-dev
+      run: |
+        sudo apt -q install gfortran libhdf5-openmpi-dev libhdf5-openmpi-100 hdf5-helpers tcl-dev tk-dev
+        sudo apt-get -qq update
 
     - name: Cache dependencies for CUDA build
       if: matrix.config.backend == 'cuda'
@@ -177,7 +173,7 @@ jobs:
     # Can't test with CUDA
     - name: ParFlow CTest
       if: matrix.config.cc != 'cuda'
-      run: \
+      run: |
         export OMPI_MCA_rmaps_base_oversubscribe=1
         export OMP_NUM_THREADS=1
         (cd build; ctest)
