@@ -37,12 +37,12 @@ jobs:
 
     - name: Directory Setup
       run: |
-        mkdir -p ~/install
-        echo "PARFLOW_DIR=~/install" >> $GITHUB_ENV
-        echo "Setting PARFLOW_DIR=~/install"
-        mkdir -p ~/depend
-        echo "PARFLOW_DEP_DIR=~/depend" >> $GITHUB_ENV
-        echo "Setting PARFLOW_DEP_DIR=~/depend"
+        mkdir -p $HOME/install
+        echo "PARFLOW_DIR=$HOME/install" >> $GITHUB_ENV
+        echo "Setting PARFLOW_DIR=$HOME/install"
+        mkdir -p $HOME/depend
+        echo "PARFLOW_DEP_DIR=$HOME/depend" >> $GITHUB_ENV
+        echo "Setting PARFLOW_DEP_DIR=$HOME/depend"
 
     - name: CMake Install
       env:
