@@ -33,7 +33,7 @@ jobs:
         cache-parflow-cuda-hit: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       with:
         path: ~/depend
-        key: ${{ runner.os }}-build-${{ env.cache-name }}
+        key: ${{ matrix.config.backend }}-build-${{ env.cache-name }}
 
     - name: Directory Setup
       run: |
