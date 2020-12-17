@@ -191,18 +191,18 @@ if( (${PARFLOW_HAVE_CUDA}) OR (${PARFLOW_HAVE_OMP}) )
 
   add_library(pfsimulator ${SRC_FILES_ARCH} ${SRC_FILES_CONST})
 
+  if( ${PARFLOW_HAVE_RMM} )
+    target_link_libraries(pfsimulator rmm)
+    target_include_directories(pfsimulator PRIVATE ${RMM_INCLUDE})
+    target_compile_definitions(pfsimulator PRIVATE PARFLOW_HAVE_RMM)
+  endif( ${PARFLOW_HAVE_RMM} )
+
   if ( ${PARFLOW_HAVE_CUDA} )
     set_target_properties(pfsimulator PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
     target_link_libraries(pfsimulator nvToolsExt)
     target_include_directories(pfsimulator PUBLIC "../third_party/cub")
     target_include_directories(pfsimulator PUBLIC ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
   endif ( ${PARFLOW_HAVE_CUDA} )
-
-  if( ${PARFLOW_HAVE_RMM} )
-    target_link_libraries(pfsimulator rmm)
-    target_include_directories(pfsimulator PRIVATE ${RMM_INCLUDE})
-    target_compile_definitions(pfsimulator PRIVATE PARFLOW_HAVE_RMM)
-  endif( ${PARFLOW_HAVE_RMM} )
 
 else( (${PARFLOW_HAVE_CUDA}) OR (${PARFLOW_HAVE_OMP}) )
 

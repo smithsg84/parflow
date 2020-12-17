@@ -141,7 +141,7 @@ jobs:
         which nvcc
 
     - name: ParFlow CMake Build
-      run: (cd build; make -j 2 install)
+      run: (cd build; make VERBOSE=1 -j 2 install)
 
 
     # Can't test with CUDA
