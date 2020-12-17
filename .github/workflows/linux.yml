@@ -10,35 +10,14 @@ jobs:
       # fail-fast: true
       matrix:
         config:
-        - {
-            name: "Ubuntu 18.04", artifact: "linux-gcc.tar.xz",
-            os: ubuntu-18.04,
-            cudaos: 'ubuntu1804',
+       - {
+            name: "Ubuntu 20.04", artifact: "linux-gcc.tar.xz",
+            os: ubuntu-20.04,
+            cudaos: 'ubuntu2004',
             python: "false",
             backend: "none",
           }
-        - {
-            name: "Ubuntu 16.04", artifact: "linux-gcc.tar.xz",
-            os: ubuntu-16.04,
-            cudaos: 'ubuntu1604',
-            python: "false",
-            backend: "none",
-          }
-        - {
-            name: "Ubuntu 18.04 Python", artifact: "linux-gcc.tar.xz",
-            os: ubuntu-18.04,
-            cudaos: 'ubuntu1804',
-            python: "true",
-            backend: "none"     
-          }
-        - {
-            name: "Ubuntu 18.04 OMP", artifact: "linux-gcc.tar.xz",
-            os: ubuntu-18.04,
-            cudaos: 'ubuntu1804',
-            python: "false",
-            backend: "omp"     
-          }
-
+	  
     steps:
     - uses: actions/checkout@v2
 
