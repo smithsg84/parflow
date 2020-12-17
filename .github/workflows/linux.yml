@@ -164,8 +164,6 @@ jobs:
 
     - name: ParFlow CMake Configure
       run: |
-        ls -R $PARFLOW_DEP_DIR
-        echo "RMM_FLAGS=$RMM_FLAGS"
         which cmake
 	export CC=mpicc
 	export CXX=mpicxx
