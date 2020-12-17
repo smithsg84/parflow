@@ -49,7 +49,7 @@ jobs:
         CACHE_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
         if [[ "$CACHE_HIT" != 'true' ]]; then
-	  cd ~/depend
+          cd ~/depend
           wget --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz
           tar -xf cmake-3.14.0-Linux-x86_64.tar.gz
         fi
