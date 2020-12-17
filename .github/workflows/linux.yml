@@ -32,27 +32,28 @@ jobs:
         cache-name: cache-parflow-cuda-dependencies
         cache-parflow-cuda-hit: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       with:
-        path: $PWD/depend
+        path: "~/depend"
         key: ${{ matrix.config.backend }}-build-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
 
     - name: Directory Setup
       run: |
-        mkdir -p $PWD/install
-        echo "PARFLOW_DIR=$PWD/install" >> $GITHUB_ENV
-        echo "Setting PARFLOW_DIR=$PWD/install"
-        mkdir -p $PWD/depend
-        echo "PARFLOW_DEP_DIR=$PWD/depend" >> $GITHUB_ENV
-        echo "Setting PARFLOW_DEP_DIR=$PWD/depend"
+        mkdir -p ~/install
+        echo "PARFLOW_DIR=~/install" >> $GITHUB_ENV
+        echo "Setting PARFLOW_DIR=~/install"
+        mkdir -p ~/depend
+        echo "PARFLOW_DEP_DIR=~/depend" >> $GITHUB_ENV
+        echo "Setting PARFLOW_DEP_DIR=~/depend"
 
     - name: CMake Install
       env:
         CACHE_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
         if [[ "$CACHE_HIT" != 'true' ]]; then
+	  cd ~/depend
           wget --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz
           tar -xf cmake-3.14.0-Linux-x86_64.tar.gz
         fi
-        echo "$PWD/cmake-3.14.0-Linux-x86_64/bin/" >> $GITHUB_PATH
+        echo "~/depend/cmake-3.14.0-Linux-x86_64/bin/" >> $GITHUB_PATH
 
     - name: CUDA Install
       if: matrix.config.backend == 'cuda'
