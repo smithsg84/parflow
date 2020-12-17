@@ -66,8 +66,4 @@ if ( DEFINED PARFLOW_LINKER_FLAGS)
    set_target_properties(parflow PROPERTIES LINK_FLAGS ${PARFLOW_LINKER_FLAGS})
  endif ( DEFINED PARFLOW_LINKER_FLAGS)
 
-if ( ${PARFLOW_HAVE_CUDA} )
-  target_link_libraries(parflow ${CUDA_LIBRARIES})
-endif ( ${PARFLOW_HAVE_CUDA} )
-
 install(TARGETS parflow DESTINATION bin)
