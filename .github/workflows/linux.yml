@@ -11,13 +11,20 @@ jobs:
       matrix:
         config:
         - {
-            name: "Ubuntu 18.04 CUDA Build", artifact: "linux-gcc.tar.xz",
+            name: "Ubuntu 18.04", artifact: "linux-gcc.tar.xz",
             os: ubuntu-18.04,
             cc: "gcc", cxx: "g++",
             python: "false",
-            backend: "cuda",
-            cudaos: 'ubuntu1804'
+            backend: "none",
           }
+        - {
+            name: "Ubuntu 18.04 Python", artifact: "linux-gcc.tar.xz",
+            os: ubuntu-18.04,
+            cc: "gcc", cxx: "g++",
+            python: "true",
+            backend: "none"     
+          }
+
     steps:
     - uses: actions/checkout@v2
 
@@ -35,6 +42,18 @@ jobs:
         path: "~/depend"
         key: ${{ matrix.config.backend }}-build-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
 
+    - name: Cache dependencies for Non-CUDA build
+      if: matrix.config.backend != 'cuda'
+      uses: actions/cache@v2
+      id: cache-parflow-dependencies
+      env:
+        cache-name: cache-parflow-dependencies
+        cache-parflow-hit: ${{steps.cache-parflow-dependencies.outputs.cache-hit}}
+      with:
+        path: "~/depend"
+        key: ${{ matrix.config.backend }}-build-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
+
+
     - name: Directory Setup
       run: |
         mkdir -p $HOME/install
@@ -46,9 +65,10 @@ jobs:
 
     - name: CMake Install
       env:
-        CACHE_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
+        CACHE_HIT: ${{steps.cache-parflow-dependencies.outputs.cache-hit}}
+        CACHE_CUDA_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
-        if [[ "$CACHE_HIT" != 'true' ]]; then
+        if [[ "$CACHE_HIT" != 'true' ]] || [[ "$CACHE_CUDA_HIT" != 'true' ]]; then
           cd ~/depend
           wget --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz
           tar -xf cmake-3.14.0-Linux-x86_64.tar.gz
@@ -77,9 +97,9 @@ jobs:
     - name: UCX
       if: matrix.config.backend == 'cuda'
       env:
-        CACHE_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
+        CACHE_CUDA_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
-        if [[ "$CACHE_HIT" != 'true' ]]; then
+        if [[ "$CACHE_CUDA_HIT" != 'true' ]]; then
           sudo apt install -y autoconf automake libtool
           wget https://github.com/openucx/ucx/releases/download/v1.8.0-rc1/ucx-1.8.0.tar.gz
           tar -xf ucx-1.8.0.tar.gz
@@ -90,10 +110,10 @@ jobs:
 
     - name: RMM Install
       env:
-        CACHE_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
+        CACHE_CUDA_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       if: matrix.config.backend == 'cuda'
       run: |
-        if [[ "$CACHE_HIT" != 'true' ]]; then
+        if [[ "$CACHE_CUDA_HIT" != 'true' ]]; then
           git clone -b branch-0.10 --single-branch --recurse-submodules https://github.com/rapidsai/rmm.git
           cd rmm
           cmake . -DCMAKE_INSTALL_PREFIX=$PARFLOW_DEP_DIR
@@ -103,10 +123,10 @@ jobs:
 
     - name: OpenMPI Install for CUDA
       env:
-        CACHE_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
+        CACHE_CUDA_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       if: matrix.config.backend == 'cuda'
       run: |
-        if [[ "$CACHE_HIT" != 'true' ]]; then
+        if [[ "$CACHE_CUDA_HIT" != 'true' ]]; then
           wget https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.3.tar.gz
           tar -xf openmpi-4.0.3.tar.gz
           cd openmpi-4.0.3
@@ -116,12 +136,26 @@ jobs:
         fi
         sudo ldconfig
 
+    - name: SILO Install
+      env:
+        CACHE_HIT: ${{steps.cache-parflow-dependencies.outputs.cache-hit}}
+        CACHE_CUDA_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
+      run: |
+       if [[ "$CACHE_HIT" != 'true' ]] || [[ "$CACHE_CUDA_HIT" != 'true' ]]; then
+          wget https://wci.llnl.gov/content/assets/docs/simulation/computer-codes/silo/silo-4.10.2/silo-4.10.2.tar.gz
+          tar -xf silo-4.10.2.tar.gz
+          cd silo-4.10.2
+          ./configure --disable-silex --disable-hzip --disable-fpzip --prefix=$PARFLOW_DEP_DIR
+          make -j 2 install
+        fi
+
     - name: HYPRE Install
       env:
-        CACHE_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
+        CACHE_HIT: ${{steps.cache-parflow-dependencies.outputs.cache-hit}}
+        CACHE_CUDA_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
-        if [[ "$CACHE_HIT" != 'true' ]]; then
-          wget https://github.com/hypre-space/hypre/archive/v2.18.2.tar.gz
+        if [[ "$CACHE_HIT" != 'true' ]] || [[ "$CACHE_CUDA_HIT" != 'true' ]]; then
+        wget https://github.com/hypre-space/hypre/archive/v2.18.2.tar.gz
           tar -xf v2.18.2.tar.gz 
           cd hypre-2.18.2/src 
           ./configure --prefix=$PARFLOW_DEP_DIR
