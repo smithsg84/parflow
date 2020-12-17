@@ -48,11 +48,11 @@ jobs:
         sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/${{ matrix.config.cudaos }}/x86_64/7fa2af80.pub
         sudo apt update -qq
         sudo apt install -y cuda-core-${CUDA_SHORT/./-} cuda-cudart-dev-${CUDA_SHORT/./-} cuda-nvtx-${CUDA_SHORT/./-}
-	export CUDA_HOME=/usr/local/cuda-${CUDA_SHORT}
+        export CUDA_HOME=/usr/local/cuda-${CUDA_SHORT}
         echo "CUDA_HOME=${CUDA_HOME}" >> $GITHUB_ENV
-	export LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
+        export LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
         echo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}" >> $GITHUB_ENV
-	export LIBRARY_PATH=${CUDA_HOME}/lib64/stubs
+        export LIBRARY_PATH=${CUDA_HOME}/lib64/stubs
         echo "LIBRARY_PATH=${LIBRARY_PATH}" >> $GITHUB_ENV
         echo "${CUDA_HOME}/bin" >> $GITHUB_PATH
 
