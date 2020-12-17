@@ -13,8 +13,23 @@ jobs:
         - {
             name: "Ubuntu 18.04", artifact: "linux-gcc.tar.xz",
             os: ubuntu-18.04,
+            cudaos: 'ubuntu1804',
             python: "false",
             backend: "none",
+          }
+        - {
+            name: "Ubuntu 16.04", artifact: "linux-gcc.tar.xz",
+            os: ubuntu-16.04,
+            cudaos: 'ubuntu1604',
+            python: "false",
+            backend: "none",
+          }
+        - {
+            name: "Ubuntu 18.04 Python", artifact: "linux-gcc.tar.xz",
+            os: ubuntu-18.04,
+            cudaos: 'ubuntu1804',
+            python: "true",
+            backend: "none"     
           }
 
     steps:
@@ -64,7 +79,7 @@ jobs:
       run: |
         if [[ "$CACHE_HIT" != 'true' ]] || [[ "$CACHE_CUDA_HIT" != 'true' ]]; then
           cd ~/depend
-          wget --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz
+          wget -nv --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz
           tar -xf cmake-3.14.0-Linux-x86_64.tar.gz
         fi
         echo "~/depend/cmake-3.14.0-Linux-x86_64/bin/" >> $GITHUB_PATH
@@ -74,7 +89,7 @@ jobs:
       run: |
         CUDA_SHORT=10.1
         CUDA_VER=10.1.105-1
-        wget http://developer.download.nvidia.com/compute/cuda/repos/${{ matrix.config.cudaos }}/x86_64/cuda-repo-${{ matrix.config.cudaos }}_${CUDA_VER}_amd64.deb
+        wget -nv http://developer.download.nvidia.com/compute/cuda/repos/${{ matrix.config.cudaos }}/x86_64/cuda-repo-${{ matrix.config.cudaos }}_${CUDA_VER}_amd64.deb
         sudo dpkg -i cuda-repo-${{ matrix.config.cudaos }}_${CUDA_VER}_amd64.deb;
         sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/${{ matrix.config.cudaos }}/x86_64/7fa2af80.pub
         sudo apt update -qq
@@ -95,7 +110,7 @@ jobs:
       run: |
         if [[ "$CACHE_CUDA_HIT" != 'true' ]]; then
           sudo apt install -y autoconf automake libtool
-          wget https://github.com/openucx/ucx/releases/download/v1.8.0-rc1/ucx-1.8.0.tar.gz
+          wget -nv https://github.com/openucx/ucx/releases/download/v1.8.0-rc1/ucx-1.8.0.tar.gz
           tar -xf ucx-1.8.0.tar.gz
           cd ucx-1.8.0
           ./contrib/configure-release --with-cuda=$CUDA_HOME --with-java=no --disable-numa --prefix=$PARFLOW_DEP_DIR 
@@ -121,7 +136,7 @@ jobs:
       if: matrix.config.backend == 'cuda'
       run: |
         if [[ "$CACHE_CUDA_HIT" != 'true' ]]; then
-          wget https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.3.tar.gz
+          wget -nv https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.3.tar.gz
           tar -xf openmpi-4.0.3.tar.gz
           cd openmpi-4.0.3
           ./configure --with-cuda=$CUDA_HOME --with-ucx=$PARFLOW_DEP_DIR
@@ -136,7 +151,7 @@ jobs:
         CACHE_CUDA_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
        if [[ "$CACHE_HIT" != 'true' ]] || [[ "$CACHE_CUDA_HIT" != 'true' ]]; then
-          wget https://wci.llnl.gov/content/assets/docs/simulation/computer-codes/silo/silo-4.10.2/silo-4.10.2.tar.gz
+          wget -nv https://wci.llnl.gov/content/assets/docs/simulation/computer-codes/silo/silo-4.10.2/silo-4.10.2.tar.gz
           tar -xf silo-4.10.2.tar.gz
           cd silo-4.10.2
           ./configure --disable-silex --disable-hzip --disable-fpzip --prefix=$PARFLOW_DEP_DIR
@@ -149,7 +164,7 @@ jobs:
         CACHE_CUDA_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
         if [[ "$CACHE_HIT" != 'true' ]] || [[ "$CACHE_CUDA_HIT" != 'true' ]]; then
-        wget https://github.com/hypre-space/hypre/archive/v2.18.2.tar.gz
+        wget -nv https://github.com/hypre-space/hypre/archive/v2.18.2.tar.gz
           tar -xf v2.18.2.tar.gz 
           cd hypre-2.18.2/src 
           ./configure --prefix=$PARFLOW_DEP_DIR
