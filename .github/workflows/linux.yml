@@ -100,7 +100,7 @@ jobs:
     - name: Check
       run : |
         which cmake
-        ls ~/depend/cache*
+        cat ~/depend/cache-key
 
     - name: NVidia Driver Install
       if: matrix.config.backend == 'cuda'
@@ -163,7 +163,7 @@ jobs:
           wget -nv https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.3.tar.gz
           tar -xf openmpi-4.0.3.tar.gz
           cd openmpi-4.0.3
-          ./configure --with-cuda=$CUDA_HOME --with-ucx=$PARFLOW_DEP_DIR
+          ./configure --with-cuda=$CUDA_HOME --with-ucx=$PARFLOW_DEP_DIR --prefix=$PARFLOW_DEP_DIR
           sudo make -j 2 install
           cd ..
         fi
@@ -195,7 +195,7 @@ jobs:
 
     - name: ParFlow CMake Configure
       run: |
-        ls ~/depend/cache*
+        cat ~/depend/cache-key
         which mpicc
         which cmake
         export OMPI_MCA_rmaps_base_oversubscribe=1
