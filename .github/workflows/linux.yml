@@ -73,7 +73,7 @@ jobs:
         cache-parflow-hit: ${{steps.cache-parflow-dependencies.outputs.cache-hit}}
       with:
         path: "~/depend"
-        key: ${{ matrix.config.backend }}-build-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
+        key: ${{ matrix.config.os }}-${{ matrix.config.backend }}-build-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
 
     - name: Directory Setup
       run: |
