@@ -98,7 +98,7 @@ jobs:
         cache-parflow-cuda-hit: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       with:
         path: "~/depend"
-        key: ${{ matrix.config.backend }}-build-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
+        key: ${{ matrix.config.os }}-${{ matrix.config.backend }}-build-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
 
     - name: Cache dependencies for Non-CUDA build
       if: matrix.config.backend != 'cuda'
