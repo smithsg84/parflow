@@ -80,14 +80,12 @@ jobs:
         printenv PATH
         mkdir -p $HOME/install
         echo "PARFLOW_DIR=$HOME/install" >> $GITHUB_ENV
-        echo "Setting PARFLOW_DIR=$HOME/install"
-        mkdir -p $HOME/depend
-        echo "PARFLOW_DEP_DIR=$HOME/depend" >> $GITHUB_ENV
-        echo "Setting PARFLOW_DEP_DIR=$HOME/depend"
-        echo "PARFLOW_DEP_DIR=$HOME/depend" >> $GITHUB_ENV
-        echo "$PARFLOW_DEP_DIR/bin" >> $GITHUB_PATH
+	PARFLOW_DEP_DIR=$HOME/depend
+        mkdir -p $PARFLOW_DEP_DIR
+        echo "PARFLOW_DEP_DIR=$PARFLOW_DEP_DIR" >> $GITHUB_ENV
         export LD_LIBRARY_PATH=${PARFLOW_DEP_DIR}/lib64:${PARFLOW_DEP_DIR}/lib:${LD_LIBRARY_PATH}
         echo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}" >> $GITHUB_ENV
+        echo "$PARFLOW_DEP_DIR/bin" >> $GITHUB_PATH
 
     - name: CMake Install
       env:
