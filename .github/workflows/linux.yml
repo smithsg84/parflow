@@ -17,42 +17,6 @@ jobs:
             python: "false",
             backend: "none",
           }
-        - {
-            name: "Ubuntu 18.04",
-            os: ubuntu-18.04,
-            cudaos: 'ubuntu1804',
-            python: "false",
-            backend: "none",
-          }
-        - {
-            name: "Ubuntu 16.04",
-            os: ubuntu-16.04,
-            cudaos: 'ubuntu1604',
-            python: "false",
-            backend: "none",
-          }
-        - {
-            name: "Ubuntu 18.04 Python",
-            os: ubuntu-18.04,
-            cudaos: 'ubuntu1804',
-            python: "true",
-            backend: "none"     
-          }
-        - {
-            name: "Ubuntu 18.04 OMP",
-            os: ubuntu-18.04,
-            cudaos: 'ubuntu1804',
-            python: "false",
-            backend: "omp"     
-          }
-        - {
-            name: "Ubuntu 18.04 CUDA Build",
-            os: ubuntu-18.04,
-            cc: "gcc", cxx: "g++",
-            python: "false",
-            backend: "cuda",
-            cudaos: 'ubuntu1804'
-          }
 
     steps:
     - uses: actions/checkout@v2
