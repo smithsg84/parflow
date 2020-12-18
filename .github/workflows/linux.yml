@@ -207,7 +207,7 @@ jobs:
 
     # Can't test with CUDA
     - name: ParFlow CTest
-      if: matrix.config.cc != 'cuda'
+      if: matrix.config.backend != 'cuda'
       run: |
         export OMPI_MCA_rmaps_base_oversubscribe=1
         export OMP_NUM_THREADS=1
