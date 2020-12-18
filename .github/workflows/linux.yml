@@ -11,16 +11,16 @@ jobs:
       matrix:
         config:
         - {
-            name: "Ubuntu 20.04",
-            os: ubuntu-20.04,
-            cudaos: 'ubuntu2004',
+            name: "Ubuntu 18.04",
+            os: ubuntu-18.04,
+            cudaos: 'ubuntu1804',
             python: "false",
             backend: "none",
           }
         - {
-            name: "Ubuntu 18.04",
-            os: ubuntu-18.04,
-            cudaos: 'ubuntu1804',
+            name: "Ubuntu 16.04",
+            os: ubuntu-16.04,
+            cudaos: 'ubuntu1604',
             python: "false",
             backend: "none",
           }
@@ -45,13 +45,6 @@ jobs:
             python: "false",
             backend: "cuda",
             cudaos: 'ubuntu1804'
-          }
-        - {
-            name: "Ubuntu 16.04",
-            os: ubuntu-16.04,
-            cudaos: 'ubuntu1604',
-            python: "false",
-            backend: "none",
           }
 
     steps:
@@ -115,12 +108,14 @@ jobs:
       run: |
         mkdir -p $HOME/install
         echo "PARFLOW_DIR=$HOME/install" >> $GITHUB_ENV
-        PARFLOW_DEP_DIR=$HOME/depend
-        mkdir -p $PARFLOW_DEP_DIR
-        echo "PARFLOW_DEP_DIR=$PARFLOW_DEP_DIR" >> $GITHUB_ENV
+        echo "Setting PARFLOW_DIR=$HOME/install"
+        mkdir -p $HOME/depend
+        echo "PARFLOW_DEP_DIR=$HOME/depend" >> $GITHUB_ENV
+        echo "Setting PARFLOW_DEP_DIR=$HOME/depend"
+        echo "PARFLOW_DEP_DIR=$HOME/depend" >> $GITHUB_ENV
+        echo "$PARFLOW_DEP_DIR/bin" >> $GITHUB_PATH
         export LD_LIBRARY_PATH=${PARFLOW_DEP_DIR}/lib64:${PARFLOW_DEP_DIR}/lib:${LD_LIBRARY_PATH}
         echo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}" >> $GITHUB_ENV
-        echo "$PARFLOW_DEP_DIR/bin" >> $GITHUB_PATH
 
     - name: CMake Install
       env:
@@ -135,6 +130,9 @@ jobs:
           ~/depend/cmake-3.14.0-Linux-x86_64/bin/cmake --version
         fi
         echo "$HOME/depend/cmake-3.14.0-Linux-x86_64/bin" >> $GITHUB_PATH
+
+    - name: Check
+      run : which cmake
 
     - name: NVidia Driver Install
       if: matrix.config.backend == 'cuda'
@@ -231,15 +229,14 @@ jobs:
 
     - name: ParFlow CMake Configure
       run: |
+        which mpicc
+        which cmake
         export OMPI_MCA_rmaps_base_oversubscribe=1
         export OMP_NUM_THREADS=1
         CC=mpicc CXX=mpicxx F77=mpif77 FC=mpif90 cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-Wall -Werror -Wno-unused-result -Wno-unused-function" -DPARFLOW_ENABLE_TIMING=TRUE -DPARFLOW_AMPS_LAYER=mpi1 -DMPIEXEC_POSTFLAGS='--oversubscribe' -DPARFLOW_ACCELERATOR_BACKEND=${{ matrix.config.backend }} -DPARFLOW_AMPS_SEQUENTIAL_IO=true -DPARFLOW_HAVE_CLM=ON -DHYPRE_ROOT=$PARFLOW_DEP_DIR -DSILO_ROOT=$PARFLOW_DEP_DIR -DPARFLOW_ENABLE_PYTHON=${{ matrix.config.python }} -DPARFLOW_PYTHON_VIRTUAL_ENV=${{ matrix.config.python }} $RMM_FLAGS -DCMAKE_INSTALL_PREFIX=$PARFLOW_DIR
 
     - name: ParFlow CMake Build
-      run: |
-        cd build
-        make -j 2
-        make install
+      run: (cd build; make -j 2 install)
 
     # Can't test with CUDA
     - name: ParFlow CTest
@@ -248,5 +245,4 @@ jobs:
         export OMPI_MCA_rmaps_base_oversubscribe=1
         export OMP_NUM_THREADS=1
         (cd build; ctest -V)
-
 
