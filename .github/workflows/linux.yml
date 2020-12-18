@@ -77,6 +77,7 @@ jobs:
 
     - name: Directory Setup
       run: |
+        printenv PATH
         mkdir -p $HOME/install
         echo "PARFLOW_DIR=$HOME/install" >> $GITHUB_ENV
         echo "Setting PARFLOW_DIR=$HOME/install"
@@ -103,7 +104,9 @@ jobs:
         echo "$HOME/depend/cmake-3.14.0-Linux-x86_64/bin" >> $GITHUB_PATH
 
     - name: Check
-      run : which cmake
+      run: |
+        which cmake
+        printenv PATH
 
     - name: NVidia Driver Install
       if: matrix.config.backend == 'cuda'
@@ -200,7 +203,8 @@ jobs:
 
     - name: ParFlow CMake Configure
       run: |
-        which mpicc
+        printenv PATH
+        which mpiexec
         which cmake
         mpiexec --version
         export OMPI_MCA_rmaps_base_oversubscribe=1
