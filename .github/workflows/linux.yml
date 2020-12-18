@@ -100,7 +100,7 @@ jobs:
           tar -xf cmake-3.14.0-Linux-x86_64.tar.gz
           ~/depend/cmake-3.14.0-Linux-x86_64/bin/cmake --version
         fi
-        echo "~/depend/cmake-3.14.0-Linux-x86_64/bin" >> $GITHUB_PATH
+        echo "$HOME/depend/cmake-3.14.0-Linux-x86_64/bin" >> $GITHUB_PATH
 
     - name: Check
       run : which cmake
