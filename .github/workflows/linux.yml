@@ -90,7 +90,7 @@ jobs:
        if [[ "$CACHE_HIT" != 'true' ]]; then
           echo "Installing"
           cd ~/depend
-          echo "cache-${{ runner.os }}-${{ matrix.config.backend }}-${{ secrets.CACHE_VERSION }}" > ~/depend/cache-key
+          echo "cache-${{ matrix.config.os }}-${{ matrix.config.backend }}-${{ secrets.CACHE_VERSION }}" > ~/depend/cache-key
           wget -nv --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz
           tar -xf cmake-3.14.0-Linux-x86_64.tar.gz
           ~/depend/cmake-3.14.0-Linux-x86_64/bin/cmake --version
@@ -196,6 +196,7 @@ jobs:
     - name: ParFlow CMake Configure
       run: |
         cat ~/depend/cache-key
+	printenv PATH
         which mpicc
         which cmake
         export OMPI_MCA_rmaps_base_oversubscribe=1
