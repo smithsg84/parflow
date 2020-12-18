@@ -68,7 +68,7 @@ jobs:
         cache-parflow-hit: ${{steps.cache-parflow-dependencies.outputs.cache-hit}}
       with:
         path: "~/depend"
-        key: cache-${{ runner.os }}-${{ matrix.config.backend }}-${{ secrets.CACHE_VERSION }}
+        key: cache-${{ matrix.config.os }}-${{ matrix.config.backend }}-${{ secrets.CACHE_VERSION }}
 
     - name: Directory Setup
       run: |
@@ -90,7 +90,7 @@ jobs:
        if [[ "$CACHE_HIT" != 'true' ]]; then
           echo "Installing"
           cd ~/depend
-          touch cache-${{ runner.os }}-${{ matrix.config.backend }}-${{ secrets.CACHE_VERSION }}
+          echo "cache-${{ runner.os }}-${{ matrix.config.backend }}-${{ secrets.CACHE_VERSION }}" > ~/depend/cache-key
           wget -nv --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz
           tar -xf cmake-3.14.0-Linux-x86_64.tar.gz
           ~/depend/cmake-3.14.0-Linux-x86_64/bin/cmake --version
