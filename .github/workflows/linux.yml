@@ -93,7 +93,7 @@ jobs:
         CACHE_HIT: ${{steps.cache-parflow-dependencies.outputs.cache-hit}}
         CACHE_CUDA_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
-        if [[ "$CACHE_HIT" != 'true' ]] || [[ "$CACHE_CUDA_HIT" != 'true' ]]; then
+        if ! ( [[ "$CACHE_HIT" == 'true' ]] || [[ "$CACHE_CUDA_HIT" == 'true' ]] ); then
           cd ~/depend
           wget -nv --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz
           tar -xf cmake-3.14.0-Linux-x86_64.tar.gz
@@ -172,7 +172,7 @@ jobs:
         CACHE_HIT: ${{steps.cache-parflow-dependencies.outputs.cache-hit}}
         CACHE_CUDA_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
-       if ! ( [[ "$CACHE_HIT" != 'true' ]] || [[ "$CACHE_CUDA_HIT" != 'true' ]] ) ; then
+        if ! ( [[ "$CACHE_HIT" == 'true' ]] || [[ "$CACHE_CUDA_HIT" == 'true' ]] ); then
           wget -nv https://wci.llnl.gov/content/assets/docs/simulation/computer-codes/silo/silo-4.10.2/silo-4.10.2.tar.gz
           tar -xf silo-4.10.2.tar.gz
           cd silo-4.10.2
@@ -185,7 +185,7 @@ jobs:
         CACHE_HIT: ${{steps.cache-parflow-dependencies.outputs.cache-hit}}
         CACHE_CUDA_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
-        if ! ( [[ "$CACHE_HIT" != 'true' ]] || [[ "$CACHE_CUDA_HIT" != 'true' ]] ) ; then
+        if ! ( [[ "$CACHE_HIT" == 'true' ]] || [[ "$CACHE_CUDA_HIT" == 'true' ]] ); then
           wget -nv https://github.com/hypre-space/hypre/archive/v2.18.2.tar.gz
           tar -xf v2.18.2.tar.gz 
           cd hypre-2.18.2/src 
