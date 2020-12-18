@@ -20,7 +20,7 @@ jobs:
         - {
             name: "Ubuntu 18.04 CUDA Build",
             os: ubuntu-18.04,
-            cudaos: 'ubuntu1804'
+            cudaos: 'ubuntu1804',
             python: "false",
             backend: "cuda",
           }
@@ -90,7 +90,7 @@ jobs:
        if [[ "$CACHE_HIT" != 'true' ]]; then
           echo "Installing"
           cd ~/depend
-	  touch cache-${{ runner.os }}-${{ matrix.config.backend }}-${{ secrets.CACHE_VERSION }}
+          touch cache-${{ runner.os }}-${{ matrix.config.backend }}-${{ secrets.CACHE_VERSION }}
           wget -nv --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz
           tar -xf cmake-3.14.0-Linux-x86_64.tar.gz
           ~/depend/cmake-3.14.0-Linux-x86_64/bin/cmake --version
@@ -100,7 +100,7 @@ jobs:
     - name: Check
       run : |
         which cmake
-	ls ~/depend/cache*
+        ls ~/depend/cache*
 
     - name: NVidia Driver Install
       if: matrix.config.backend == 'cuda'
@@ -195,7 +195,7 @@ jobs:
 
     - name: ParFlow CMake Configure
       run: |
-      	ls ~/depend/cache*
+        ls ~/depend/cache*
         which mpicc
         which cmake
         export OMPI_MCA_rmaps_base_oversubscribe=1
