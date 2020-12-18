@@ -94,12 +94,12 @@ jobs:
         CACHE_CUDA_HIT: ${{steps.cache-parflow-cuda-dependencies.outputs.cache-hit}}
       run: |
         if ! ( [[ "$CACHE_HIT" == 'true' ]] || [[ "$CACHE_CUDA_HIT" == 'true' ]] ); then
-	  echo "Installing"
+          echo "Installing"
           cd ~/depend
           wget -nv --no-check-certificate http://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz
           tar -xf cmake-3.14.0-Linux-x86_64.tar.gz
-	  ls -R ~/depend
-	  ~/depend/cmake-3.14.0-Linux-x86_64/bin/cmake -v
+          ls -R ~/depend
+          ~/depend/cmake-3.14.0-Linux-x86_64/bin/cmake -v
         fi
         echo "~/depend/cmake-3.14.0-Linux-x86_64/bin" >> $GITHUB_PATH
 
