@@ -196,7 +196,7 @@ jobs:
     - name: ParFlow CMake Configure
       run: |
         cat ~/depend/cache-key
-	printenv PATH
+        printenv PATH
         which mpicc
         which cmake
         export OMPI_MCA_rmaps_base_oversubscribe=1
