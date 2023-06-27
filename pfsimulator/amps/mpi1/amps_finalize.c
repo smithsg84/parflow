@@ -69,7 +69,7 @@ int amps_Finalize()
     MPI_Comm_free(&amps_CommWrite);
     MPI_Comm_free(&amps_CommWorld);
     
-    MPI_Finalize();
+    /* MPI_Finalize(); */
   }
 #if defined(PARFLOW_HAVE_CUDA) || defined(PARFLOW_HAVE_KOKKOS)
   amps_gpu_finalize();
