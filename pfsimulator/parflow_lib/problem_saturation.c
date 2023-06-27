@@ -655,6 +655,34 @@ void     Saturation(
 }
 
 /*--------------------------------------------------------------------------
+ * SaturationGetAlpha
+ *--------------------------------------------------------------------------*/
+
+PFModule *SaturationGetAlpha(PFModule *this_module)
+{
+    PublicXtra *public_xtra = (PublicXtra *)PFModulePublicXtra(this_module);
+
+    Type1 *dummy1;
+    dummy1 = (Type1 *)(public_xtra -> data);
+
+    return (dummy1 -> alpha_values);
+}
+
+/*--------------------------------------------------------------------------
+ * SaturationGetN
+ *--------------------------------------------------------------------------*/
+
+PFModule *SaturationGetN(PFModule *this_module)
+{
+    PublicXtra *public_xtra = (PublicXtra *)PFModulePublicXtra(this_module);
+
+    Type1 *dummy1;
+    dummy1 = (Type1 *)(public_xtra -> data);
+
+    return (dummy1 -> n_values);
+}
+
+/*--------------------------------------------------------------------------
  * SaturationInitInstanceXtra
  *--------------------------------------------------------------------------*/
 

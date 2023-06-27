@@ -1577,6 +1577,9 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
   double sw_lon = .0;
 #endif
 
+int           istep = 1;
+char          filename[2048];
+
 #ifdef HAVE_CLM
   Grid *grid = (instance_xtra->grid);
   Subgrid *subgrid;
@@ -1597,8 +1600,8 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
   int fflag, fstart, fstop;     // IMF: index w/in 3D forcing array corresponding to istep
   int n, c;                     // IMF: index vars for looping over subgrid data BH: added c
   int ind_veg;                  /*BH: temporary variable to store vegetation index */
-  int Stepcount = 0;            /* Added for transient EvapTrans file management - NBE */
-  int Loopcount = 0;            /* Added for transient EvapTrans file management - NBE */
+  /* int Stepcount = 0;            /\* Added for transient EvapTrans file management - NBE *\/ */
+  /* int Loopcount = 0;            /\* Added for transient EvapTrans file management - NBE *\/ */
   double sw=NAN, lw=NAN, prcp=NAN, tas=NAN, u=NAN, v=NAN, patm=NAN, qatm=NAN;   // IMF: 1D forcing vars (local to AdvanceRichards)
   double lai[18], sai[18], z0m[18], displa[18]; /*BH: array with lai/sai/z0m/displa values for each veg class */
   double *sw_data = NULL;
@@ -1663,6 +1666,8 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
   char file_prefix[2048], file_type[2048], file_postfix[2048];
   char nc_postfix[2048];
 
+  int Stepcount = 0;            /* Added for transient EvapTrans file management - NBE */
+  int Loopcount = 0;            /* Added for transient EvapTrans file management - NBE */
   int first_tstep = 1;
 
   sprintf(file_prefix, "%s", GlobalsOutFileName);
@@ -1673,6 +1678,8 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
   int nlat = GetInt("ComputationalGrid.NY");
   double pfl_step = GetDouble("TimeStep.Value");
   double pfl_stop = GetDouble("TimingInfo.StopTime");
+	// PDAF: getting start time
+	double pfl_start = GetDouble("TimingInfo.StartTime");
 
   int is;
   ForSubgridI(is, GridSubgrids(grid))
@@ -1691,8 +1698,8 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
     dx = SubgridDX(subgrid);
     dy = SubgridDY(subgrid);
 
-    CALL_oas_pfl_define(nx, ny, dx, dy, ix, iy, sw_lon, sw_lat, nlon, nlat,
-                        pfl_step, pfl_stop);
+    // CALL_oas_pfl_define(nx, ny, dx, dy, ix, iy, sw_lon, sw_lat, nlon, nlat,
+    //                     pfl_step, pfl_stop);
   }
   amps_Sync(amps_CommWorld);
 #endif // end to HAVE_OAS3 CALL
@@ -1718,6 +1725,23 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
   }
   dt = cdt;
 
+#ifdef FOR2131
+   PFModuleInvokeType(SaturationInvoke, problem_saturation,
+                     (instance_xtra -> saturation, instance_xtra -> pressure,
+                      instance_xtra -> density, gravity, problem_data,
+                      CALCFCN));
+
+   handle = InitVectorUpdate(instance_xtra -> saturation, VectorUpdateAll);
+   FinalizeVectorUpdate(handle);
+
+ //sprintf(file_postfix, "pressIC.%05d",instance_xtra -> file_number);
+// WritePFBinary(file_prefix, file_postfix, instance_xtra -> pressure);
+ //sprintf(file_postfix, "saturIC.%05d",instance_xtra -> file_number);
+// WritePFBinary(file_prefix, file_postfix, instance_xtra -> saturation);
+  // sprintf(file_postfix, "permIC.%05d",instance_xtra -> file_number);
+  // WritePFBinary(file_prefix, file_postfix, ProblemDataPermeabilityX(problem_data));
+
+#endif
   /*
    * Check to see if pressure solves are requested
    * start_count < 0 implies that subsurface data ONLY is requested
@@ -1745,6 +1769,19 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
   {
     if (t == ct)
     {
+        if (time_step_control)
+        {
+          PFModuleInvokeType(SelectTimeStepInvoke, time_step_control,
+                             (&dt, &dt_info, t, problem,
+                              problem_data));
+        }
+        else
+        {
+          PFModuleInvokeType(SelectTimeStepInvoke, select_time_step,
+                             (&dt, &dt_info, t, problem,
+                              problem_data));
+        }
+
       ct += cdt;
 
       //CPS oasis exchange
@@ -2438,7 +2475,30 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
 
 
       //#endif   //End of call to CLM
+      /* NBE counter for reusing CLM input files */
+      clm_next += 1;
+      if (clm_next > clm_skip)
+      {
+        istep = istep + 1;
+        clm_next = 1;
+      }                         // NBE
 
+      //istep  = istep + 1;
+
+      EndTiming(CLMTimingIndex);
+
+
+      /* =============================================================
+       *  NBE: It looks like the time step isn't really scaling the CLM
+       *  inputs, but the looping flag is working as intended as
+       *  of 2014-04-06.
+       *
+       *  It is using the different time step counter BUT then it
+       *  isn't scaling the inputs properly.
+       *  ============================================================= */
+#endif	// End of call to CLM
+
+          istep = istep + 1;
       /******************************************/
       /*    read transient evap trans flux file */
       /******************************************/
@@ -2492,28 +2552,28 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
       }
 
 
-      /* NBE counter for reusing CLM input files */
-      clm_next += 1;
-      if (clm_next > clm_skip)
-      {
-        istep = istep + 1;
-        clm_next = 1;
-      }                         // NBE
+//       /* NBE counter for reusing CLM input files */
+//       clm_next += 1;
+//       if (clm_next > clm_skip)
+//       {
+//         istep = istep + 1;
+//         clm_next = 1;
+//       }                         // NBE
 
-      //istep  = istep + 1;
+//       //istep  = istep + 1;
 
-      EndTiming(CLMTimingIndex);
+//       EndTiming(CLMTimingIndex);
 
 
-      /* =============================================================
-       *  NBE: It looks like the time step isn't really scaling the CLM
-       *  inputs, but the looping flag is working as intended as
-       *  of 2014-04-06.
-       *
-       *  It is using the different time step counter BUT then it
-       *  isn't scaling the inputs properly.
-       *  ============================================================= */
-#endif
+//       /* =============================================================
+//        *  NBE: It looks like the time step isn't really scaling the CLM
+//        *  inputs, but the looping flag is working as intended as
+//        *  of 2014-04-06.
+//        *
+//        *  It is using the different time step counter BUT then it
+//        *  isn't scaling the inputs properly.
+//        *  ============================================================= */
+// #endif
     }                           //Endif to check whether an entire dt is complete
 
     converged = 1;
@@ -2535,18 +2595,18 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
       /*******************************************************************/
       if (converged)
       {
-        if (time_step_control)
-        {
-          PFModuleInvokeType(SelectTimeStepInvoke, time_step_control,
-                             (&dt, &dt_info, t, problem,
-                              problem_data));
-        }
-        else
-        {
-          PFModuleInvokeType(SelectTimeStepInvoke, select_time_step,
-                             (&dt, &dt_info, t, problem,
-                              problem_data));
-        }
+        // if (time_step_control)
+        // {
+        //   PFModuleInvokeType(SelectTimeStepInvoke, time_step_control,
+        //                      (&dt, &dt_info, t, problem,
+        //                       problem_data));
+        // }
+        // else
+        // {
+        //   PFModuleInvokeType(SelectTimeStepInvoke, select_time_step,
+        //                      (&dt, &dt_info, t, problem,
+        //                       problem_data));
+        // }
 
         PFVCopy(instance_xtra->density, instance_xtra->old_density);
         PFVCopy(instance_xtra->saturation,
@@ -2969,7 +3029,7 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
    /***************************************************************
     *          modify land surface pressures                      *
     ***************************************************************/
-   
+
     if (public_xtra->reset_surface_pressure == 1)
     {
       GrGeomSolid *gr_domain = ProblemDataGrDomain(problem_data);
@@ -4048,6 +4108,185 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
   *saturation_out = instance_xtra->saturation;
 }
 
+// Compare to AdvanceRichards() in parflow v3.9.0
+PseudoAdvanceRichards(PFModule * this_module, double start_time,      /* Starting time */
+                double stop_time,       /* Stopping time */
+                PFModule * time_step_control,   /* Use this module to control timestep if supplied */
+                Vector * evap_trans,    /* Flux from land surface model */
+                Vector ** pressure_out,         /* Output vars */
+                Vector ** porosity_out, Vector ** saturation_out)
+{
+  //>>TSMP-PDAF internal change beginning (compare to AdvanceRichards)
+  printf("Pseudo richard for OAS init\n");
+  //>>TSMP-PDAF internal change end
+
+  PublicXtra *public_xtra = (PublicXtra*)PFModulePublicXtra(this_module);
+  InstanceXtra *instance_xtra =
+    (InstanceXtra*)PFModuleInstanceXtra(this_module);
+  Problem *problem = (public_xtra->problem);
+
+  int max_iterations = (public_xtra->max_iterations);
+  int print_satur = (public_xtra->print_satur);
+  int print_wells = (public_xtra->print_wells);
+
+  PFModule *problem_saturation = (instance_xtra->problem_saturation);
+  PFModule *phase_density = (instance_xtra->phase_density);
+  PFModule *select_time_step = (instance_xtra->select_time_step);
+  PFModule *l2_error_norm = (instance_xtra->l2_error_norm);
+  PFModule *nonlin_solver = (instance_xtra->nonlin_solver);
+
+  ProblemData *problem_data = (instance_xtra->problem_data);
+
+  int start_count = ProblemStartCount(problem);
+  double dump_interval = ProblemDumpInterval(problem);
+
+  Vector *porosity = ProblemDataPorosity(problem_data);
+  Vector *evap_trans_sum = instance_xtra->evap_trans_sum;
+  Vector *overland_sum = instance_xtra->overland_sum;   /* sk: Vector of outflow at the boundary */
+
+  if (evap_trans == NULL)
+  {
+    evap_trans = instance_xtra->evap_trans;
+  }
+
+#ifdef HAVE_OAS3
+  Grid *grid = (instance_xtra->grid);
+  Subgrid *subgrid;
+  Subvector *p_sub, *s_sub, *et_sub, *m_sub, *po_sub, *dz_sub;
+  double *pp, *sp, *et, *ms, *po_dat, *dz_dat;
+  double sw_lat = .0;
+  double sw_lon = .0;
+#endif
+
+//>>TSMP-PDAF internal change beginning (compare to AdvanceRichards)
+// #ifdef HAVE_CLM
+//   Grid *grid = (instance_xtra->grid);
+//   Subgrid *subgrid;
+//   Subvector *p_sub, *s_sub, *et_sub, *m_sub, *po_sub, *dz_sub;
+//   double *pp, *sp, *et, *ms, *po_dat, *dz_dat;
+
+//   /* IMF: For CLM met forcing (local to AdvanceRichards) */
+//   int istep;                    // IMF: counter for clm output times
+
+//   /* NBE added for clm reuse of inputs */
+//   int clm_next = 1;             //NBE: Counter for reuse loop
+//   int clm_skip = public_xtra->clm_reuse_count;  // NBE:defaults to 1
+//   int clm_write_logs = public_xtra->clm_write_logs;     // NBE: defaults to 1, disables log file writing if 0
+//   int clm_last_rst = public_xtra->clm_last_rst; // Reuse of the RST file
+//   int clm_daily_rst = public_xtra->clm_daily_rst;       // Daily or hourly RST files, defaults to daily
+
+//   int fstep = INT_MIN;
+//   int fflag, fstart, fstop;     // IMF: index w/in 3D forcing array corresponding to istep
+//   int n, c;                     // IMF: index vars for looping over subgrid data BH: added c
+//   int ind_veg;                  /*BH: temporary variable to store vegetation index */
+//   double sw=NAN, lw=NAN, prcp=NAN, tas=NAN, u=NAN, v=NAN, patm=NAN, qatm=NAN;   // IMF: 1D forcing vars (local to AdvanceRichards)
+//   double lai[18], sai[18], z0m[18], displa[18]; /*BH: array with lai/sai/z0m/displa values for each veg class */
+//   double *sw_data = NULL;
+//   double *lw_data = NULL;
+//   double *prcp_data = NULL;     // IMF: 2D forcing vars (SubvectorData) (local to AdvanceRichards)
+//   double *tas_data = NULL;
+//   double *u_data = NULL;
+//   double *v_data = NULL;
+//   double *patm_data = NULL;
+//   double *qatm_data = NULL;
+//   double *lai_data = NULL;
+//   /*BH*/ double *sai_data = NULL;
+//   /*BH*/ double *z0m_data = NULL;
+//   /*BH*/ double *displa_data = NULL;
+//   /*BH*/ double *veg_map_data = NULL;
+//   /*BH*/                        /*will fail if veg_map_data is declared as int */
+//   char filename[2048];          // IMF: 1D input file name *or* 2D/3D input file base name
+//   Subvector *sw_forc_sub, *lw_forc_sub, *prcp_forc_sub, *tas_forc_sub, *u_forc_sub, *v_forc_sub, *patm_forc_sub, *qatm_forc_sub, *lai_forc_sub, *sai_forc_sub, *z0m_forc_sub, *displa_forc_sub, *veg_map_forc_sub;      /*BH: added LAI/SAI/Z0M/DISPLA/vegmap */
+
+//   /* Slopes */
+//   Subvector *slope_x_sub, *slope_y_sub;
+//   double *slope_x_data, *slope_y_data;
+
+//   /* IMF: For writing CLM output */
+//   Subvector *eflx_lh_tot_sub, *eflx_lwrad_out_sub, *eflx_sh_tot_sub,
+//     *eflx_soil_grnd_sub, *qflx_evap_tot_sub, *qflx_evap_grnd_sub,
+//     *qflx_evap_soi_sub, *qflx_evap_veg_sub, *qflx_tran_veg_sub,
+//     *qflx_infl_sub, *swe_out_sub, *t_grnd_sub, *tsoil_sub, *irr_flag_sub,
+//     *qflx_qirr_sub, *qflx_qirr_inst_sub;
+
+//   double *eflx_lh, *eflx_lwrad, *eflx_sh, *eflx_grnd, *qflx_tot, *qflx_grnd,
+//     *qflx_soi, *qflx_eveg, *qflx_tveg, *qflx_in, *swe, *t_g, *t_soi, *iflag,
+//     *qirr, *qirr_inst;
+//   int clm_file_dir_length;
+// #endif
+//>>TSMP-PDAF internal change end
+
+  int any_file_dumped;
+  int clm_file_dumped;
+  int dump_files = 0;
+
+  int retval;
+  int converged;
+  int take_more_time_steps;
+  int conv_failures;
+  int max_failures = public_xtra->max_convergence_failures;
+
+  double t;
+  double dt = 0.0;
+  double ct = 0.0;
+  double cdt = 0.0;
+  double print_dt;
+  double dtmp, err_norm;
+  double gravity = ProblemGravity(problem);
+
+  VectorUpdateCommHandle *handle;
+
+  char dt_info;
+  char file_prefix[2048], file_type[2048], file_postfix[2048];
+  char nc_postfix[2048];
+
+//>>TSMP-PDAF internal change beginning (compare to AdvanceRichards)
+  // int Stepcount = 0;            /* Added for transient EvapTrans file management - NBE */
+  // int Loopcount = 0;            /* Added for transient EvapTrans file management - NBE */
+  // int first_tstep = 1;
+//>>TSMP-PDAF internal change end
+
+  sprintf(file_prefix, "%s", GlobalsOutFileName);
+
+  //CPS oasis definition phase
+#ifdef HAVE_OAS3
+  int nlon = GetInt("ComputationalGrid.NX");
+  int nlat = GetInt("ComputationalGrid.NY");
+  double pfl_step = GetDouble("TimeStep.Value");
+  double pfl_stop = GetDouble("TimingInfo.StopTime");
+  //>>TSMP-PDAF internal change beginning (compare to AdvanceRichards)
+  double pfl_start = GetDouble("TimingInfo.StartTime");
+  //>>TSMP-PDAF internal change end
+
+  int is;
+  ForSubgridI(is, GridSubgrids(grid))
+  {
+    double dx, dy;
+    int nx, ny, ix, iy;
+
+    subgrid = GridSubgrid(grid, is);
+
+    nx = SubgridNX(subgrid);
+    ny = SubgridNY(subgrid);
+
+    ix = SubgridIX(subgrid);
+    iy = SubgridIY(subgrid);
+
+    dx = SubgridDX(subgrid);
+    dy = SubgridDY(subgrid);
+
+  //>>TSMP-PDAF internal change beginning (compare to AdvanceRichards)
+    // gw only init once
+    // kuw
+    CALL_oas_pfl_define(nx, ny, dx, dy, ix, iy, sw_lon, sw_lat, nlon, nlat,
+                        pfl_step, pfl_stop);
+    // kuw end
+    // gw end
+  //>>TSMP-PDAF internal change end
+  }
+  amps_Sync(amps_CommWorld);
+#endif // end to HAVE_OAS3 CALL
+}
 
 void
 TeardownRichards(PFModule * this_module)
@@ -5794,6 +6033,16 @@ GetProblemDataRichards(PFModule * this_module)
   return(instance_xtra->problem_data);
 }
 
+PFModule *GetPhaseRelPerm(PFModule *this_module){
+   InstanceXtra *instance_xtra 	= (InstanceXtra *)PFModuleInstanceXtra(this_module);
+   return (instance_xtra -> phase_rel_perm);
+}
+
+PFModule *GetSaturation(PFModule *this_module){
+   InstanceXtra *instance_xtra 	= (InstanceXtra *)PFModuleInstanceXtra(this_module);
+   return (instance_xtra -> problem_saturation);
+}
+
 Problem *
 GetProblemRichards(PFModule * this_module)
 {
@@ -5809,4 +6058,44 @@ GetICPhasePressureRichards(PFModule * this_module)
     (InstanceXtra*)PFModuleInstanceXtra(this_module);
 
   return(instance_xtra->ic_phase_pressure);
+}
+
+Vector *GetPressureRichards(PFModule *this_module)
+{
+  InstanceXtra  *instance_xtra    =
+    (InstanceXtra *)PFModuleInstanceXtra(this_module);
+
+  return (instance_xtra -> pressure);
+}
+
+Vector *GetSaturationRichards(PFModule *this_module)
+{
+  InstanceXtra  *instance_xtra    =
+    (InstanceXtra *)PFModuleInstanceXtra(this_module);
+
+  return (instance_xtra -> saturation);
+}
+
+Vector *GetDensityRichards(PFModule *this_module)
+{
+  InstanceXtra  *instance_xtra    =
+    (InstanceXtra *)PFModuleInstanceXtra(this_module);
+
+  return (instance_xtra -> density);
+}
+
+int GetEvapTransFile(PFModule *this_module)
+{
+  PublicXtra    *public_xtra      =
+    (PublicXtra *)PFModulePublicXtra(this_module);
+
+  return (public_xtra -> evap_trans_file);
+}
+
+char *GetEvapTransFilename(PFModule *this_module)
+{
+  PublicXtra    *public_xtra      =
+    (PublicXtra *)PFModulePublicXtra(this_module);
+
+  return (public_xtra -> evap_trans_filename);
 }
