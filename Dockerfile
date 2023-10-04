@@ -20,10 +20,6 @@ RUN apt-get update && \
         gfortran \
         libopenblas-dev \
         liblapack-dev \
-        openmpi-bin \
-        libopenmpi-dev \
-	libhdf5-openmpi-dev \
-	libhdf5-openmpi-103 \
         python3 \
         python3-pip \
         python3-venv \
@@ -31,8 +27,9 @@ RUN apt-get update && \
         tk-dev \
 	cmake \
 	libxml2 \
-	libxml2-dev
-
+	libxml2-dev \
+	m4
+	
 RUN mkdir -p /home/parflow
 
 #-----------------------------------------------------------------------------
@@ -46,22 +43,37 @@ ENV PATH $PATH:$PARFLOW_DIR/bin
 # Build libraries
 #-----------------------------------------------------------------------------
 
+ARG mpich=4.0.2
+ARG mpich_prefix=mpich-$mpich
+
+WORKDIR /home/parflow
+RUN \
+    echo "Options = UnsafeLegacyRenegotiation" >> /etc/ssl/openssl.cnf                                    && \
+    wget --no-check-certificate https://www.mpich.org/static/downloads/$mpich/$mpich_prefix.tar.gz        && \
+    tar xvzf $mpich_prefix.tar.gz                                                                         && \                                            
+    cd $mpich_prefix                                                                                      && \
+    FFLAGS=-fallow-argument-mismatch FCFLAGS=-fallow-argument-mismatch ./configure                        && \
+    make -j 4                                             && \
+    make install                                          && \
+    cd ..                                                 && \
+    rm -rf $mpich_prefix
+
 #
 # HDF5
 #  New version does not work with NetCDF; use Ubunuto supplied version
 #  https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.2/src/hdf5-1.12.2.tar.bz2
 #
-# WORKDIR /home/parflow
-# RUN wget -q https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.21/src/hdf5-1.8.21.tar.gz && \ 
-#     tar -xf hdf5-1.8.21.tar.gz && \
-#     cd hdf5-1.8.21 && \
-#     CC=mpicc ./configure \
-#       --prefix=$PARFLOW_DIR \
-#       --enable-parallel && \
-#     make && make install && \
-#     cd .. && \
-#     rm -fr hdf5-1.8.21 hdf5-1.8.21.tar.gz
-
+WORKDIR /home/parflow
+RUN wget -q https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.21/src/hdf5-1.8.21.tar.gz && \ 
+     tar -xf hdf5-1.8.21.tar.gz && \
+     cd hdf5-1.8.21 && \
+     CC=mpicc ./configure \
+       --prefix=$PARFLOW_DIR \
+       --enable-parallel && \
+     make && make install && \
+     cd .. && \
+     rm -fr hdf5-1.8.21 hdf5-1.8.21.tar.gz
+     
 #
 # NetCDF
 # 
@@ -69,7 +81,7 @@ WORKDIR /home/parflow
 run wget -q https://github.com/Unidata/netcdf-c/archive/v4.9.0.tar.gz && \ 
     tar -xf v4.9.0.tar.gz && \
     cd netcdf-c-4.9.0 && \
-    CC=mpicc CPPFLAGS=-I/usr/include/hdf5/openmpi LDFLAGS=-L/usr/lib/x86_64-linux-gnu/hdf5/openmpi ./configure --prefix=${PARFLOW_DIR} && \
+    CC=mpicc CPPFLAGS=-I${PARFLOW_DIR}/include LDFLAGS=-L${PARFLOW_DIR}/lib ./configure --prefix=${PARFLOW_DIR} && \
     make && \
     make install && \
     cd .. && \
@@ -116,7 +128,8 @@ RUN  wget -q https://github.com/hypre-space/hypre/archive/v2.26.0.tar.gz && \
 # Parflow configure and build
 #-----------------------------------------------------------------------------
 
-ENV PARFLOW_MPIEXEC_EXTRA_FLAGS "--mca mpi_yield_when_idle 1 --oversubscribe --allow-run-as-root"
+# For OpenMPI, not needed for MPICH
+# ENV PARFLOW_MPIEXEC_EXTRA_FLAGS "--mca mpi_yield_when_idle 1 --oversubscribe --allow-run-as-root"
 
 # Disable HWLOC warnings from showing up, confusing messages, this has been fixed in later OpenMPI versions
 ENV HWLOC_HIDE_ERRORS "2"
@@ -125,9 +138,12 @@ WORKDIR /home/parflow
 
 RUN git clone -b master --single-branch https://github.com/parflow/parflow.git parflow
 
+run apt-get install -y gdb
+
 RUN mkdir -p build && \
     cd build && \
     cmake ../parflow \
+       -DCMAKE_BUILD_TYPE=Debug \
        -DPARFLOW_AMPS_LAYER=mpi1 \
        -DPARFLOW_AMPS_SEQUENTIAL_IO=TRUE \
        -DHYPRE_ROOT=$PARFLOW_DIR \
@@ -140,9 +156,11 @@ RUN mkdir -p build && \
        -DPARFLOW_PYTHON_VIRTUAL_ENV=ON \
        -DCURL_LIBRARY=/usr/lib/x86_64-linux-gnu/libcurl.so.4 \
        -DCMAKE_INSTALL_PREFIX=$PARFLOW_DIR && \
-     make install && \
-     cd .. && \
-     rm -fr parflow build
+     make install
+
+# && \
+# cd .. && \
+# rm -fr parflow build
 
 WORKDIR /data
 
