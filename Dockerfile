@@ -43,7 +43,7 @@ ENV PATH $PATH:$PARFLOW_DIR/bin
 # Build libraries
 #-----------------------------------------------------------------------------
 
-ARG mpich=4.0.2
+ARG mpich=4.1.2
 ARG mpich_prefix=mpich-$mpich
 
 WORKDIR /home/parflow
