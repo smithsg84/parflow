@@ -658,7 +658,7 @@ void     Saturation(
  * SaturationGetAlpha
  *--------------------------------------------------------------------------*/
 
-PFModule *SaturationGetAlpha(PFModule *this_module)
+Vector *SaturationGetAlpha(PFModule *this_module)
 {
     PublicXtra *public_xtra = (PublicXtra *)PFModulePublicXtra(this_module);
 
@@ -672,7 +672,7 @@ PFModule *SaturationGetAlpha(PFModule *this_module)
  * SaturationGetN
  *--------------------------------------------------------------------------*/
 
-PFModule *SaturationGetN(PFModule *this_module)
+Vector *SaturationGetN(PFModule *this_module)
 {
     PublicXtra *public_xtra = (PublicXtra *)PFModulePublicXtra(this_module);
 

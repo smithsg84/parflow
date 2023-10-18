@@ -974,8 +974,8 @@ typedef PFModule *(*SaturationOutputStaticInvoke) (char *file_prefix, ProblemDat
 
 /* problem_saturation.c */
 void Saturation(Vector *phase_saturation, Vector *phase_pressure, Vector *phase_density, double gravity, ProblemData *problem_data, int fcn);
-PFModule *SaturationGetAlpha(PFModule *this_module);
-PFModule *SaturationGetN(PFModule *this_module);
+Vector *SaturationGetAlpha(PFModule *this_module);
+Vector *SaturationGetN(PFModule *this_module);
 PFModule *SaturationInitInstanceXtra(Grid *grid, double *temp_data);
 void SaturationFreeInstanceXtra(void);
 PFModule *SaturationNewPublicXtra(void);
