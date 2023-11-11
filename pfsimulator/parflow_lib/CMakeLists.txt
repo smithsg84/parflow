@@ -282,3 +282,67 @@ if (${PARFLOW_HAVE_NETCDF})
   target_include_directories (pfsimulator PUBLIC "${netCDF_INCLUDE_DIRS}")
   target_include_directories (pfsimulator PUBLIC "${NETCDF_INCLUDE_DIRS}")
 endif (${PARFLOW_HAVE_NETCDF})
+
+# Install headers
+set (HEADER_FILES
+  backend_mapping.h
+  background.h
+  bc_pressure.h
+  char_vector.h
+  clustering.h
+  communication.h
+  computation.h
+  drv_gridmodule.h
+  drv_module.h
+  drv_tilemodule.h
+  f2c.h
+  fgetopt.h
+  file_versions.h
+  general.h
+  geometry.h
+  geostats.h
+  globals.h
+  grgeometry.h
+  grgeom_list.h
+  grgeom_octree.h
+  grid.h
+  hbt.h
+  hypre_dependences.h
+  index_space.h
+  info_header.h
+  input_database.h
+  kinsol_dependences.h
+  lb.h
+  llnlmath.h
+  llnltyps.h
+  logging.h
+  loops.h
+  matrix.h
+  metadata.h
+  nl_function_eval.h
+  n_vector.h
+  parflow.h
+  parflow_netcdf.h
+  parflow_proto_f90.h
+  parflow_proto_f.h
+  parflow_proto.h
+  pf_cudaloops.h
+  pf_cudamalloc.h
+  pf_devices.h
+  pf_hypre.h
+  pf_kokkosloops.h
+  pf_kokkosmalloc.h
+  pf_module.h
+  pf_omploops.h
+  problem_bc.h
+  problem_eval.h
+  problem.h
+  region.h
+  solver.h
+  time_cycle_data.h
+  timing.h
+  vector.h
+  well.h
+)
+install(FILES ${HEADER_FILES}
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/parflow)
