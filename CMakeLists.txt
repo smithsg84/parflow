@@ -12,6 +12,7 @@ set (CMAKE_C_STANDARD 11)
 
 include (CheckCCompilerFlag)
 include (CheckCXXCompilerFlag)
+include(GNUInstallDirs)
 
 # Check if compiler supports extra debugging flags
 foreach (DEBUG_FLAG "-ggdb" "-g3")
@@ -546,6 +547,10 @@ if ( ${PARFLOW_HAVE_CLM} )
   configure_file (pfsimulator/clm/parflow_config.F90.in ${PROJECT_BINARY_DIR}/pfsimulator/clm/parflow_config.F90)
 endif ( ${PARFLOW_HAVE_CLM} )
 
+# Install headers
+install(FILES ${CMAKE_BINARY_DIR}/include/parflow_config.h 
+              ${CMAKE_BINARY_DIR}/include/pfversion.h
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/parflow)
 #-----------------------------------------------------------------------------
 # CMAKE Subdirectories
 #-----------------------------------------------------------------------------

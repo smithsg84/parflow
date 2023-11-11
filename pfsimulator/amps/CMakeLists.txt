@@ -46,5 +46,11 @@ set(AMPS_SCRIPTS run)
 string(REGEX REPLACE "([^;]+)" "${PARFLOW_AMPS_LAYER}/\\1" AMPS_SCRIPTS "${AMPS_SCRIPTS}")
 install(FILES ${AMPS_SCRIPTS} DESTINATION bin)
 
+# Install headers
+install(FILES common/amps_common.h
+              ${PARFLOW_AMPS_LAYER}/amps.h
+              ${PARFLOW_AMPS_LAYER}/amps_proto.h
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/parflow)
+
 add_subdirectory (test/src)
 
