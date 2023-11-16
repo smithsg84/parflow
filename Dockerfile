@@ -155,7 +155,11 @@ RUN mkdir -p build && \
        -DPARFLOW_ENABLE_PYTHON=TRUE \
        -DPARFLOW_PYTHON_VIRTUAL_ENV=ON \
        -DCURL_LIBRARY=/usr/lib/x86_64-linux-gnu/libcurl.so.4 \
-       -DCMAKE_INSTALL_PREFIX=$PARFLOW_DIR && \
+       -DCMAKE_INSTALL_PREFIX=$PARFLOW_DIR \
+       -DMPIEXEC_EXECUTABLE="" \
+       -DMPIEXEC_NUMPROC_FLAG="FOO=" \
+       -DMPIEXEC_PREFLAGS="" \
+       -DMPIEXEC_POSTFLAGS="" && \
      make install
 
 # && \
