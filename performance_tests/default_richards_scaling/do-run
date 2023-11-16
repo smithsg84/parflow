@@ -1,0 +1,12 @@
+#!/bin/bash
+
+for s in $(seq 3)
+do
+   #for i in $(seq 10)
+   for i in $(seq 3)
+   do
+      nx=$(( i * 100 ))
+      num_procs=$(( i * i ))
+      mpirun -n $num_procs parflow results/${nx}_${nx}_20/${s}/default_richards
+   done
+done

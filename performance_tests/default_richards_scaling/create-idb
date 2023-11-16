@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for s in $(seq 3)
+do
+   for i in $(seq 10)
+   do
+      tclsh default_richards.tcl $i $i 1 $s
+   done
+done
