@@ -1,0 +1,204 @@
+#!/bin/env python3
+"""Plot scaling studies
+"""
+from matplotlib import dates
+from matplotlib import pyplot as plt
+from matplotlib.font_manager import FontProperties
+from matplotlib.ticker import MaxNLocator
+import matplotlib.transforms as mtransforms
+from pathlib import Path
+import argparse
+import datetime
+import numpy as np
+#import sympy
+import sys
+import pandas as pd
+
+import glob
+import re
+
+def find_files(file_glob:str):
+    """
+    my_path + '/**/*.txt'	
+    """
+    files = glob.glob(file_glob, recursive=True)
+    return files
+
+
+def main(arguments):
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('-i', '--image-output-filename', help="Filename of plot", default='out.png')
+    parser.add_argument('-t', '--title', help="Title of plot", default='ParFlow Container Scaling')
+    parser.add_argument('-r', '--results-dir', help="Directory with results", default='results')
+    args = parser.parse_args(arguments)
+
+    files = find_files("results/**/*.out.timing.csv")
+
+    print(f"files={files}")
+
+    dfs = {}
+
+    for file in files:
+        print(f"file={file}")
+        m = re.findall('/(\d+)', file)
+        num_procs=int(int(m[0])/100)
+        num_procs *= num_procs
+        seq=int(m[1])
+        print(f"   num_procs={num_procs}, seq={seq}")
+
+        new_df = pd.read_csv(file, sep=',')
+        new_df = new_df[['Timer', 'Time (s)']]
+        new_df.rename(columns={'Time (s)' : 'Time ' + str(seq)}, inplace=True)
+        
+        if num_procs in dfs:
+            dfs[num_procs] = pd.merge(dfs[num_procs], new_df, on='Timer')
+        else:
+            dfs[num_procs] = new_df
+
+
+    output_file=args.image_output_filename
+
+    fig, axs = plt.subplots(2)
+    
+    title=args.title    
+    xaxis_label='Number of Ranks'
+
+    timers=['Total Runtime', 'PFB I/O']
+
+    for i, timer in enumerate(timers):
+        print(i, timer)
+        x_data= []
+        y_data = []
+        for key,df in dfs.items():
+            df['Mean'] = df.mean(axis=1)
+            df['Stddev'] = df.std(axis=1)
+            print("*****************************************************************************")
+            print(f"{key}")
+            print("*****************************************************************************")
+            print(df)
+
+            print("*****************************************************************************")
+            row = df.loc[df["Timer"] == timer]
+            mean=float(row['Mean'])
+            print(f"key={key} mean={mean}")
+
+            x_data.append(key)
+            y_data.append(mean)
+
+        xaxis_label='Number of Ranks'
+        yaxis_label='Time (s)'
+
+        axs[i].scatter(x_data, y_data)
+        axs[i].set_xlabel(xaxis_label)
+        axs[i].set_ylabel(yaxis_label)
+
+        label=timer
+        trans = mtransforms.ScaledTranslation(10/72, -5/72, fig.dpi_scale_trans)
+        axs[i].text(0.0, 1.0, label, transform=axs[i].transAxes + trans,
+                fontsize='medium', verticalalignment='top', fontfamily='serif',
+                bbox=dict(facecolor='1.0', edgecolor='none', pad=3.0))
+
+    fig.suptitle(f"{title}", fontsize=18)
+            
+    fig.set_size_inches(10, 4*2)
+    fig.tight_layout()
+
+    plt.savefig(output_file, bbox_inches="tight")
+
+    plt.show()
+
+    plt.close()
+
+def add_quadtractic_fit(plt, x_data, y_data):
+    poly = np.polynomial.Polynomial.fit(x_data, y_data, 2)
+    coef = poly.convert().coef
+    print_poly = np.polynomial.Polynomial(truncate_significant_figures(coef))
+        
+    x=sympy.Symbol('x')
+    pretty_poly = sympy.expand(print_poly(x))
+
+    # polynomial line visualization
+    polyline = np.linspace(np.min(x_data), np.max(x_data), 100)
+    plt.plot(polyline, poly(polyline))
+    plt.text(np.mean(x_data)/2.0, np.min(y_data), pretty_poly)
+
+def truncate_significant_figures(x, precision=3):
+    x = np.asarray(x)
+    x_positive = np.where(np.isfinite(x) & (x != 0), np.abs(x), 10**(precision-1))
+    mags = 10 ** (precision - 1 - np.floor(np.log10(x_positive)))
+    return np.round(x * mags) / mags
+
+def old_main(arguments):
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('-i', '--image-output-filename', help="Filename of plot", default='out.png')
+    parser.add_argument('-t', '--title', help="Title of plot", default='Constant Density Scaling')
+    parser.add_argument('-r', '--results-dir', help="Directory with results", default='results')
+    args = parser.parse_args(arguments)
+
+    title=args.title
+    output_file=args.image_output_filename
+    results_dir=Path(args.results_dir)
+    
+    xaxis_label="Number of Platforms"
+    yaxis_label=[["Time (s)", "Time per Platform (s)"], ["Memory (Kb)", "Memory per Platform (Kb)"]]
+
+    plot_num=0
+
+    axis_font = FontProperties()
+    axis_font.set_weight('bold')
+    axis_font.set_size('large')
+
+    fig, axs = plt.subplots(2, 2)
+
+    for i,filename in enumerate(files):
+        print(f"file : {filename}")
+        y=0
+        df = pd.read_csv(results_dir / filename, sep=',', header=None)
+        df = df.sort_values(by=df.columns[1])
+
+        df['mean'] = df.iloc[:, 1:].mean(axis=1)
+
+        x_data = df[0].to_numpy()
+        y_data = df['mean'].to_numpy()
+
+        axs[i,y].scatter(x_data, y_data)
+        axs[i,y].set_xlabel(xaxis_label)
+        axs[i,y].set_ylabel(yaxis_label[i][y])
+
+        add_quadtractic_fit(axs[i,y], x_data, y_data)
+        
+        y += 1
+
+        x_data = df[0].to_numpy()
+        y_data = df['mean'].to_numpy()
+        base=y_data[0]
+        y_data = np.subtract(y_data, base)
+        y_data = np.divide(y_data, x_data)
+
+        y_data = np.delete(y_data, 0)
+        x_data = np.delete(x_data, 0)
+
+        axs[i,y].scatter(x_data, y_data)
+        axs[i,y].set_xlabel(xaxis_label)
+        axs[i,y].set_ylabel(yaxis_label[i][y])
+
+        add_quadtractic_fit(axs[i,y], x_data, y_data)
+        
+    fig.suptitle(f"{title}", fontsize=18)
+            
+    fig.set_size_inches(10, 4*2)
+    fig.tight_layout()
+
+    plt.savefig(output_file, bbox_inches="tight")
+
+    plt.show()
+
+    plt.close()
+
+if __name__ == '__main__' :
+    sys.exit(main(sys.argv[1:]))
+
