@@ -1,0 +1,8 @@
+#!/bin/bash
+
+for i in $(seq 22)
+do
+   num_ranks=$(( i * i ))
+   num_nodes=$(( ( $num_ranks + 127 ) / 128 ))
+   echo sbatch -N $num_nodes perlmutter-shifter.slurm $i
+done
