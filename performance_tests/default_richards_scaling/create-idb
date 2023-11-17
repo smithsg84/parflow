@@ -1,9 +1,21 @@
 #!/bin/bash
 
-for s in $(seq 3)
+for study_name in 'container' 'native'
 do
-   for i in $(seq 10)
+   for s in $(seq 3)
    do
-      tclsh default_richards.tcl $i $i 1 $s
+      for i in $(seq 10)
+      do
+	 case $study_name in
+	    native)
+	       tclsh default_richards.tcl $i $i 1 ${study_name} $s
+	       ;;
+
+	    container)
+	       tclsh default_richards.tcl $i $i 1 ${study_name} $s
+	       ;;
+	       
+	 esac
+      done
    done
 done

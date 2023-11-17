@@ -1,12 +1,25 @@
 #!/bin/bash
 
-for s in $(seq 3)
+for study_name in 'container' 'native'
 do
-   #for i in $(seq 10)
-   for i in $(seq 3)
+   for s in $(seq 3)
    do
-      nx=$(( i * 100 ))
-      num_procs=$(( i * i ))
-      mpirun -n $num_procs parflow results/${nx}_${nx}_20/${s}/default_richards
+      #for i in $(seq 10)
+      for i in $(seq 3)
+      do
+	 nx=$(( i * 100 ))
+	 num_procs=$(( i * i ))
+
+	 case $study_name in
+	    native)
+	       mpirun -n $num_procs parflow results/${study_name}/${nx}_${nx}_20/${s}/default_richards
+	       ;;
+
+	    container)
+	       mpirun -n $num_procs parflow results/${study_name}/${nx}_${nx}_20/${s}/default_richards
+	       ;;
+	       
+	 esac
+      done
    done
 done

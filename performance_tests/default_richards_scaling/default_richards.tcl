@@ -15,7 +15,9 @@ set P        [lindex $argv 0]
 set Q        [lindex $argv 1]
 set R        [lindex $argv 2]
 
-set seq      [lindex $argv 3]
+set study_name [lindex $argv 3]
+
+set seq      [lindex $argv 4]
 
 pfset Process.Topology.P   $P
 pfset Process.Topology.Q   $Q
@@ -364,7 +366,7 @@ pfset Solver.Linear.Preconditioner.MGSemi.MaxLevels      100
 #-----------------------------------------------------------------------------
 # Run and Unload the ParFlow output files
 #-----------------------------------------------------------------------------
-set results_dir "${NX}_${NY}_${NZ}/${seq}"
+set results_dir "${study_name}/${NX}_${NY}_${NZ}/${seq}"
 file mkdir results/${results_dir}
 pfwritedb results/${results_dir}/default_richards
 
