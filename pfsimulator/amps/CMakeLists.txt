@@ -4,6 +4,11 @@ set(COMMON_SRC_FILES amps_abort.c amps_clear.c amps_clock.c
   amps_exchange.c amps_ffopen.c amps_find_powers.c amps_fopen.c
   amps_invoice.c amps_io.c amps_newhandle.c amps_newpackage.c
   amps_sfbcast.c amps_sfclose.c amps_sfopen.c amps_wait.c signal.c amps_print.c)
+
+list(APPEND HEADER_FILES common/amps_common.h
+                        ${PARFLOW_AMPS_LAYER}/amps.h
+                        ${PARFLOW_AMPS_LAYER}/amps_proto.h)
+
 string(REGEX REPLACE "([^;]+)" "common/\\1" COMMON_SRC_FILES "${COMMON_SRC_FILES}")
 
 # Sets AMPS_SRC_FILES for AMPS transport layer being used in build
@@ -36,6 +41,7 @@ if(${PARFLOW_HAVE_OAS3})
   
   target_link_libraries(amps ${NETCDF_Fortran_LIBRARY})
   target_include_directories(amps PUBLIC "${NETCDF_Fortran_INCLUDES}")
+  list(APPEND HEADER_FILES oas3/oas3_coupler.h oas3/oas3_external.h)
 endif(${PARFLOW_HAVE_OAS3})
 
 
@@ -47,9 +53,7 @@ string(REGEX REPLACE "([^;]+)" "${PARFLOW_AMPS_LAYER}/\\1" AMPS_SCRIPTS "${AMPS_
 install(FILES ${AMPS_SCRIPTS} DESTINATION bin)
 
 # Install headers
-install(FILES common/amps_common.h
-              ${PARFLOW_AMPS_LAYER}/amps.h
-              ${PARFLOW_AMPS_LAYER}/amps_proto.h
+install(FILES ${HEADER_FILES}
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/parflow)
 
 add_subdirectory (test/src)

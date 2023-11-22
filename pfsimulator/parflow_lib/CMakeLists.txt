@@ -321,6 +321,7 @@ set (HEADER_FILES
   metadata.h
   nl_function_eval.h
   n_vector.h
+  Parflow.hxx
   parflow.h
   parflow_netcdf.h
   parflow_proto_f90.h
