@@ -53,16 +53,8 @@ string(REGEX REPLACE "([^;]+)" "${PARFLOW_AMPS_LAYER}/\\1" AMPS_SCRIPTS "${AMPS_
 install(FILES ${AMPS_SCRIPTS} DESTINATION bin)
 
 # Install headers
-install(FILES common/amps_common.h
-              ${PARFLOW_AMPS_LAYER}/amps.h
-              ${PARFLOW_AMPS_LAYER}/amps_proto.h
+install(FILES ${HEADER_FILES}
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/parflow)
-if(${PARFLOW_HAVE_OAS3})
-  install(FILES common/amps_common.h
-                ${PARFLOW_AMPS_LAYER}/oas3_coupler.h
-		${PARFLOW_AMPS_LAYER}/oas3_external.h
-	  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/parflow)
-endif(${PARFLOW_HAVE_OAS3})
 
 add_subdirectory (test/src)
 
