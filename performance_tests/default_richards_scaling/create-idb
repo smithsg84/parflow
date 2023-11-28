@@ -1,10 +1,12 @@
 #!/bin/bash
 
+source /global/homes/u/u9563/global-parflow/perlmutter-v3.9.0-2023-10-24/setenv.sh
+
 for study_name in 'container' 'native'
 do
    for s in $(seq 3)
    do
-      for i in $(seq 10)
+      for i in $(seq 22)
       do
 	 case $study_name in
 	    native)
