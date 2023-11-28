@@ -143,7 +143,7 @@ run apt-get install -y gdb
 RUN mkdir -p build && \
     cd build && \
     cmake ../parflow \
-       -DCMAKE_BUILD_TYPE=Debug \
+       -DCMAKE_BUILD_TYPE=RELEASE \
        -DPARFLOW_AMPS_LAYER=mpi1 \
        -DPARFLOW_AMPS_SEQUENTIAL_IO=TRUE \
        -DHYPRE_ROOT=$PARFLOW_DIR \

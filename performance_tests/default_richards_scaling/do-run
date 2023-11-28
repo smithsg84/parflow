@@ -1,11 +1,12 @@
 #!/bin/bash
 
-for study_name in 'container' 'native'
+for s in $(seq 3)
 do
-   for s in $(seq 3)
+   #for i in $(seq 3)
+   # Perlmutter 4 nodes = 512 cores 22*22 = 484
+   for i in $(seq 22)
    do
-      #for i in $(seq 10)
-      for i in $(seq 3)
+      for study_name in 'container' 'native'
       do
 	 nx=$(( i * 100 ))
 	 num_procs=$(( i * i ))

@@ -30,79 +30,78 @@ def main(arguments):
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-i', '--image-output-filename', help="Filename of plot", default='out.png')
-    parser.add_argument('-t', '--title', help="Title of plot", default='ParFlow Container Scaling')
+    parser.add_argument('-t', '--title', help="Title of plot", default='ParFlow Native vs Container Performance')
     parser.add_argument('-r', '--results-dir', help="Directory with results", default='results')
     args = parser.parse_args(arguments)
 
-    files = find_files("results/**/*.out.timing.csv")
-
-    print(f"files={files}")
 
     dfs = {}
 
-    for file in files:
-        print(f"file={file}")
-        m = re.findall('/(\d+)', file)
-        num_procs=int(int(m[0])/100)
-        num_procs *= num_procs
-        seq=int(m[1])
-        print(f"   num_procs={num_procs}, seq={seq}")
-
-        new_df = pd.read_csv(file, sep=',')
-        new_df = new_df[['Timer', 'Time (s)']]
-        new_df.rename(columns={'Time (s)' : 'Time ' + str(seq)}, inplace=True)
+    for study in ['native', 'container']:
+        dfs[study]={}
         
-        if num_procs in dfs:
-            dfs[num_procs] = pd.merge(dfs[num_procs], new_df, on='Timer')
-        else:
-            dfs[num_procs] = new_df
+        files = find_files(f"results/{study}/**/*.out.timing.csv")
 
+        for file in files:
+            m = re.findall('/(\d+)', file)
+            num_procs=int(int(m[0])/100)
+            num_procs *= num_procs
+            seq=int(m[1])
+
+            new_df = pd.read_csv(file, sep=',')
+            new_df = new_df[['Timer', 'Time (s)']]
+            new_df.rename(columns={'Time (s)' : 'Time ' + str(seq)}, inplace=True)
+        
+            if num_procs in dfs:
+                dfs[study][num_procs] = pd.merge(dfs[num_procs], new_df, on='Timer')
+            else:
+                dfs[study][num_procs] = new_df
 
     output_file=args.image_output_filename
 
-    fig, axs = plt.subplots(2)
+
     
     title=args.title    
     xaxis_label='Number of Ranks'
 
-    timers=['Total Runtime', 'PFB I/O']
+    timers=['Total Runtime', 'Solver', 'KINSol', 'PFB I/O']
 
-    for i, timer in enumerate(timers):
-        print(i, timer)
-        x_data= []
-        y_data = []
-        for key,df in dfs.items():
-            df['Mean'] = df.mean(axis=1)
-            df['Stddev'] = df.std(axis=1)
-            print("*****************************************************************************")
-            print(f"{key}")
-            print("*****************************************************************************")
-            print(df)
+    fig, axs = plt.subplots(len(timers))
 
-            print("*****************************************************************************")
-            row = df.loc[df["Timer"] == timer]
-            mean=float(row['Mean'])
-            print(f"key={key} mean={mean}")
+    for study in ['native', 'container']:
 
-            x_data.append(key)
-            y_data.append(mean)
+        for i, timer in enumerate(timers):
+            x_data= []
+            y_data = []
+            for key,df in dfs[study].items():
+                df['Mean'] = df.mean(axis=1)
+                df['Stddev'] = df.std(axis=1)
+                
+                row = df.loc[df["Timer"] == timer]
+                mean=float(row['Mean'])
 
-        xaxis_label='Number of Ranks'
-        yaxis_label='Time (s)'
+                x_data.append(key)
+                y_data.append(mean)
 
-        axs[i].scatter(x_data, y_data)
-        axs[i].set_xlabel(xaxis_label)
-        axs[i].set_ylabel(yaxis_label)
+            xaxis_label='Number of Ranks'
+            yaxis_label='Time (s)'
 
-        label=timer
-        trans = mtransforms.ScaledTranslation(10/72, -5/72, fig.dpi_scale_trans)
-        axs[i].text(0.0, 1.0, label, transform=axs[i].transAxes + trans,
-                fontsize='medium', verticalalignment='top', fontfamily='serif',
-                bbox=dict(facecolor='1.0', edgecolor='none', pad=3.0))
+            axs[i].scatter(x_data, y_data,label=f"{study}" )
+            axs[i].set_xlabel(xaxis_label)
+            axs[i].set_ylabel(yaxis_label)
+
+            label=timer
+            trans = mtransforms.ScaledTranslation(10/72, -5/72, fig.dpi_scale_trans)
+            axs[i].text(0.01, 0.99, label, transform=axs[i].transAxes + trans,
+                    fontsize='medium', verticalalignment='top', fontfamily='serif',
+                    bbox=dict(facecolor='lightgrey', edgecolor='none', pad=3.0))
+
+            axs[i].legend(loc='lower right')
+            
 
     fig.suptitle(f"{title}", fontsize=18)
             
-    fig.set_size_inches(10, 4*2)
+    fig.set_size_inches(10, 4*len(timers))
     fig.tight_layout()
 
     plt.savefig(output_file, bbox_inches="tight")
