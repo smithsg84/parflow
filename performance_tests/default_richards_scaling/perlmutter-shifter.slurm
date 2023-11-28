@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --image=smithsg84/mpi4py:v1.0.0
+#SBATCH --image=smithsg84/pftest:latest
 #SBATCH --qos=regular
 #SBATCH --constraint=cpu
 #SBATCH -t 01:00:00
@@ -18,14 +18,16 @@ do
 
       case $study_name in
 	 native)
-	    srun -n $num_procs parflow results/${study_name}/${nx}_${nx}_20/${s}/default_richards
+	    time srun -n $num_procs parflow results/${study_name}/${nx}_${nx}_20/${s}/default_richards
 	    ;;
 
 	 container)
 	    # srun -n 4 python3 hello_world.py
-	    shifter  -n $num_procs --entrypoint=parflow --image=smithsg84/pftest:latest results/${study_name}/${nx}_${nx}_20/${s}/default_richards
+	    time srun -n $num_procs shifter --entrypoint=parflow -- results/${study_name}/${nx}_${nx}_20/${s}/default_richards
 	    ;;
       esac
+
+      sleep 20
    done
 done
 
