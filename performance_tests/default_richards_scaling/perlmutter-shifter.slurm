@@ -27,7 +27,7 @@ do
 	    ;;
       esac
 
-      sleep 20
+      sleep 30
    done
 done
 
