@@ -455,7 +455,7 @@ void NoDiagScaleFreePublicXtra(void);
 int NoDiagScaleSizeOfTempData(void);
 
 /* parflow.c */
-int main(int argc, char *argv []);
+//int main(int argc, char *argv []);
 
 /* pcg.c */
 void PCG(Vector *x, Vector *b, double tol, int zero);
