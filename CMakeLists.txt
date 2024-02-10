@@ -67,6 +67,8 @@ elseif(PARFLOW_ACCELERATOR_BACKEND STREQUAL "kokkos")
     find_package(Kokkos REQUIRED HINTS ${KOKKOS_ROOT})
     set(KOKKOS_INCLUDE "${KOKKOS_ROOT}/include")
     set(PARFLOW_HAVE_KOKKOS "yes")
+    # Have not fully removed all Kokkos V3 deprecated methods
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKokkos_ENABLE_DEPRECATED_CODE_3=ON")
   else(DEFINED KOKKOS_ROOT)
     message(FATAL_ERROR "ERROR: KOKKOS_ROOT not specified with PARFLOW_ACCELERATOR_BACKEND=kokkos")
   endif(DEFINED KOKKOS_ROOT)
