@@ -166,6 +166,11 @@ RUN mkdir -p build && \
 # cd .. && \
 # rm -fr parflow build
 
+WORKDIR /home/parflow
+RUN wget --no-check-certificate http://www.hpcg-benchmark.org/downloads/hpcg-3.0.tar.gz && \
+    tar -xf hpcg-3.0.tar.gz && \
+    cd hpcg-3.0 && make arch=Linux_MPI && cd ..
+
 WORKDIR /data
 
 ENTRYPOINT ["pfrun"]
