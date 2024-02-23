@@ -6,7 +6,7 @@ for study_name in 'container' 'native'
 do
    for s in $(seq 3)
    do
-      for i in $(seq 22)
+      for i in $(seq 25)
       do
 	 case $study_name in
 	    native)
