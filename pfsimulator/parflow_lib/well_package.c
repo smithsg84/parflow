@@ -203,10 +203,17 @@ void         WellPackage(
 
           process = amps_Rank(amps_CommWorld);
 
-          new_subgrid = NewSubgrid(ix, iy, iz_lower,
-                                   nx, ny, nz,
-                                   rx, ry, rz,
-                                   process);
+	  Subgrid *tmp_subgrid = NewSubgrid(ix, iy, iz_lower,
+					    nx, ny, nz,
+					    rx, ry, rz,
+					    process);
+
+	  SubgridArray     *subgrids;
+	  subgrids = GridSubgrids(problem_data -> grid);
+	  // Assumes 1 subgrid!!!
+	  Subgrid *local_subgrid = SubgridArraySubgrid(subgrids, 0);
+
+	  new_subgrid = IntersectSubgrids(local_subgrid, tmp_subgrid);
 
           dx = SubgridDX(new_subgrid);
           dy = SubgridDY(new_subgrid);
@@ -511,14 +518,22 @@ void         WellPackage(
 
             process = amps_Rank(amps_CommWorld);
 
-            new_subgrid = NewSubgrid(ix, iy, iz_lower,
-                                     nx, ny, nz,
-                                     rx, ry, rz,
-                                     process);
-            dx = SubgridDX(new_subgrid);
+	    Subgrid *tmp_subgrid = NewSubgrid(ix, iy, iz_lower,
+					      nx, ny, nz,
+					      rx, ry, rz,
+					      process);
+	    
+	    SubgridArray     *subgrids;
+	    subgrids = GridSubgrids(problem_data -> grid);
+	    // Assumes 1 subgrid!!!
+	    Subgrid *local_subgrid = SubgridArraySubgrid(subgrids, 0);
+
+	    new_subgrid = IntersectSubgrids(local_subgrid, tmp_subgrid);
+
+	    dx = SubgridDX(new_subgrid);
             dy = SubgridDY(new_subgrid);
             dz = SubgridDZ(new_subgrid);
-
+	
             subgrid_volume = (nx * dx) * (ny * dy) * (nz * dz);
 
             if (mechanism == PRESSURE_WELL)

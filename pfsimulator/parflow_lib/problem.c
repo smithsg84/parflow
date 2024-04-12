@@ -446,6 +446,8 @@ ProblemData   *NewProblemData(
 
   ProblemDataWellData(problem_data) = NewWellData();
 
+  problem_data -> grid = grid;
+
   return problem_data;
 }
 
