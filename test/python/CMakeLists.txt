@@ -2,6 +2,7 @@ include(ParflowTest)
 
 set(TESTS
   default_single
+  default_single_read_porosity
   default_richards_wells
   forsyth2
   harvey_flow
@@ -16,11 +17,13 @@ set(TESTS
   bc_flux_file
   Dirichlet
   LW_surface_press
+  overland_tiltedV_MGSemiTest
 )
 
 if(${PARFLOW_HAVE_HYPRE})
   list(APPEND TESTS
     default_richards
+    default_richards_restart
     default_richards_nocluster
     default_overland
     octree-simple
@@ -86,11 +89,13 @@ list(APPEND PARALLEL_2DTOPO_TESTS "")
 
 if ( ${PARFLOW_AMPS_LAYER} IN_LIST PARFLOW_AMPS_LAYER_REQUIRE_MPI )
   list(APPEND PARALLEL_3DTOPO_TESTS
-    default_single)
+    default_single
+    default_single_read_porosity)
 
   if(${PARFLOW_HAVE_HYPRE})
     list(APPEND PARALLEL_3DTOPO_TESTS
-      default_richards)
+      default_richards
+      default_richards_restart)
 
     list(APPEND PARALLEL_2DTOPO_TESTS
       default_overland
@@ -135,7 +140,9 @@ foreach(inputfile ${PARALLEL_3DTOPO_TESTS})
   pf_add_py_parallel_test(${inputfile} 1 4 1)
   pf_add_py_parallel_test(${inputfile} 4 1 1)
   pf_add_py_parallel_test(${inputfile} 2 2 2)
-  pf_add_py_parallel_test(${inputfile} 3 3 3)
+  if(NOT( ((${PARFLOW_HAVE_CUDA}) OR (${PARFLOW_HAVE_KOKKOS}) OR (${PARFLOW_HAVE_OMP})) ))
+    pf_add_py_parallel_test(${inputfile} 3 3 3)
+  endif()
 
 endforeach()
 
