@@ -1,3 +1,14 @@
+# Fork of ParFlow pre-patched for TSMP-PDAF
+
+**DO NOT USE WITHOUT PDAF**
+
+This is a fork of ParFlow with changes added to run ParFlow in the
+TSMP-PDAF framework.
+
+It is built via the TSMP2 repository:
+https://github.com/HPSCTerrSys/TSMP2
+
+
 # ParFlow
 
 ![ParFlow CI Test](https://github.com/parflow/parflow/workflows/ParFlow%20CI%20Test/badge.svg)
