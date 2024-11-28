@@ -1712,7 +1712,6 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
 #endif
 
 int           istep = 1;
-char          filename[2048];
 
 #ifdef HAVE_CLM
   Grid *grid = (instance_xtra->grid);
