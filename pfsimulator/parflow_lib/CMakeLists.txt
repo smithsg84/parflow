@@ -360,6 +360,7 @@ set (HEADER_FILES
   timing.h
   vector.h
   well.h
+  reservoir.h
 )
 install(FILES ${HEADER_FILES}
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/parflow)
