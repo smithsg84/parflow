@@ -268,7 +268,7 @@ An HTML version of the user manual for Parflow may be built using:
 
 ```shell
 cd docs/user_manual
-pip install -r requirements.txt
+pfpython -m pip install -r requirements.txt
 
 make html
 ```
@@ -292,7 +292,7 @@ An HTML version of the user manual for Parflow may be built using:
 
 ```shell
 cd docs/user_manual
-pip install -r requirements.txt
+pfpython -m pip install -r requirements.txt
 
 make latexpdf
 ```
@@ -326,7 +326,6 @@ HTML pages are generated in the build/docs/doxygen/html directory.
       -D PARFLOW_ENABLE_SIMULATOR=OFF \
       -D PARFLOW_ENABLE_KEYS_DOC=ON \
       -D PARFLOW_ENABLE_PYTHON=ON \
-      -D PARFLOW_PYTHON_VIRTUAL_ENV=ON
 
     cd ./build-docker && make ParFlowKeyDoc
 ```
