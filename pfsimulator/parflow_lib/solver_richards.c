@@ -1815,25 +1815,25 @@ int           istep = 1;
 	double pfl_start = GetDouble("TimingInfo.StartTime");
 
   int is;
-  ForSubgridI(is, GridSubgrids(grid))
-  {
-    double dx, dy;
-    int nx, ny, ix, iy;
+  /* ForSubgridI(is, GridSubgrids(grid)) */
+  /* { */
+  /*   double dx, dy; */
+  /*   int nx, ny, ix, iy; */
 
-    subgrid = GridSubgrid(grid, is);
+  /*   subgrid = GridSubgrid(grid, is); */
 
-    nx = SubgridNX(subgrid);
-    ny = SubgridNY(subgrid);
+  /*   nx = SubgridNX(subgrid); */
+  /*   ny = SubgridNY(subgrid); */
 
-    ix = SubgridIX(subgrid);
-    iy = SubgridIY(subgrid);
+  /*   ix = SubgridIX(subgrid); */
+  /*   iy = SubgridIY(subgrid); */
 
-    dx = SubgridDX(subgrid);
-    dy = SubgridDY(subgrid);
+  /*   dx = SubgridDX(subgrid); */
+  /*   dy = SubgridDY(subgrid); */
 
     // CALL_oas_pfl_define(nx, ny, dx, dy, ix, iy, sw_lon, sw_lat, nlon, nlat,
     //                     pfl_step, pfl_stop);
-  }
+  /* } */
   amps_Sync(amps_CommWorld);
 #endif // end to HAVE_OAS3 CALL
 
