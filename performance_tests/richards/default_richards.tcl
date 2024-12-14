@@ -178,11 +178,11 @@ pfset Gravity				1.0
 # Setup timing info
 #-----------------------------------------------------------------------------
 
-pfset TimingInfo.BaseUnit		1.0
+pfset TimingInfo.BaseUnit		0.1
 pfset TimingInfo.StartCount		0
 pfset TimingInfo.StartTime		0.0
-pfset TimingInfo.StopTime               0.010
-pfset TimingInfo.DumpInterval	       -1
+pfset TimingInfo.StopTime               0.1
+pfset TimingInfo.DumpInterval	        -50
 pfset TimeStep.Type                     Constant
 pfset TimeStep.Value                    0.001
 
@@ -322,7 +322,8 @@ pfset KnownSolution                                    NoKnownSolution
 # Set solver parameters
 #-----------------------------------------------------------------------------
 pfset Solver                                             Richards
-pfset Solver.MaxIter                                     5
+#pfset Solver.MaxIter                                     1000000
+pfset Solver.MaxIter                                     10
 
 pfset Solver.Nonlinear.MaxIter                           10
 pfset Solver.Nonlinear.ResidualTol                       1e-9
@@ -333,11 +334,23 @@ pfset Solver.Nonlinear.DerivativeEpsilon                 1e-2
 
 pfset Solver.Linear.KrylovDimension                      10
 
-pfset Solver.Linear.Preconditioner                       PFMG 
+pfset Solver.Linear.Preconditioner                       MGSemi
 pfset Solver.Linear.Preconditioner.MGSemi.MaxIter        1
 pfset Solver.Linear.Preconditioner.MGSemi.MaxLevels      100
 
-pfset Solver.PrintVelocities True
+pfset Solver.PrintinitialConditions False
+pfset Solver.PrintSubsurfData False
+pfset Solver.PrintSlopes False
+pfset Solver.PrintMannings False
+pfset Solver.PrintSpecificStorage False
+pfset Solver.PrintTop False
+pfset Solver.PrintMask  False
+pfset Solver.PrintPressure False
+pfset Solver.PrintSaturation False
+pfset Solver.PrintConcentration False
+pfset Solver.PrintVelocities False
+pfset Solver.PrintWells  False
+pfset Solver.PrintReservoirs False
 
 #-----------------------------------------------------------------------------
 # Run and Unload the ParFlow output files

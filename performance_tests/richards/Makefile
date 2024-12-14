@@ -8,10 +8,10 @@ include $(PARFLOW_DIR)/config/Makefile.config
 
 PARFLOW=$(PARFLOW_DIR)/bin/parflow
 
-default: 
+default: scaling
 
 scaling:
-	@for s in `seq 8`; do                                  \
+	@for s in `seq 3`; do                                \
 	   echo $${s};                                         \
 	   for i in `seq 3` ; do	                       \
 	       name=scaling.$${s}.$${i};                       \
@@ -19,26 +19,6 @@ scaling:
 	       /usr/bin/time --format "CSV,Total Time,$${s},$${i},%e" tclsh scaling.tcl $${s} $${name}; \
 	   done;                                               \
 	done
-
-small:
-	@tclsh small_domain.tcl
-	@mv gmon.out gmon.sum
-	@for i in `seq 9` ; do	                              \
-	    echo $${i};                                       \
-	    parflow small_domain;                             \
-	    gprof -s $(PARFLOW) gmon.out gmon.sum;            \
-	done
-	@gprof $(PARFLOW) gmon.sum > small_domain.gprof.txt
-
-big:
-	@tclsh big_domain.tcl
-	@mv gmon.out gmon.sum
-	@for i in `seq 9` ; do	                              \
-	    echo $${i};                                       \
-	    parflow big_domain;                             \
-	    gprof -s $(PARFLOW) gmon.out gmon.sum;            \
-	done
-	@gprof $(PARFLOW) gmon.sum > big_domain.gprof.txt
 
 clean:
 	@rm -f gmon.sum gmon.txt
