@@ -46,6 +46,7 @@ def main(arguments):
     df = pd.read_csv(times1_filename)
     
     x_data = df['Size'].to_numpy()
+    x_data = x_data * (18 * 15 * 8)
     y_data = df['mean'].to_numpy()
 
     line,=axs.plot(x_data, y_data, label=label1, marker="o")
@@ -55,6 +56,7 @@ def main(arguments):
     df = pd.read_csv(times2_filename)
     
     x_data = df['Size'].to_numpy()
+    x_data = x_data * (18 * 15 * 8)
     y_data = df['mean'].to_numpy()
 
     line,=axs.plot(x_data, y_data, label=label2, marker="o")
