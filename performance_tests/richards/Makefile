@@ -20,6 +20,19 @@ scaling:
 	   done;                                               \
 	done
 
+.PHONY: plot post-cpu
+post-cpu:
+	./extract_times --output=cpu-times.csv
+
+.PHONY: plot post-cuda
+post-cuda:
+	./extract_times --output=cuda-times.csv
+
+.PHONY: plot
+plot:
+	./plot
+
+
 clean:
 	@rm -f gmon.sum gmon.txt
 	@rm -f gmon.out
@@ -34,3 +47,7 @@ clean:
 	@rm -f *.out.txt
 	@rm -f rsl.*
 	@rm -f *.pfmetadata
+
+veryclean: clean
+	@rm -f *.csv
+	@rm -f out.png

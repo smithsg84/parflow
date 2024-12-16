@@ -6,41 +6,65 @@ import sys
 import re
 import fileinput
 import tempfile
+import argparse
 
 
 import pandas as pd
 
 from collections import defaultdict
 
-times_df = pd.DataFrame({'Size' : [], 'Time 1': [], 'Time 2' : [], 'Time 3' : []})
 
-for i in range(1,4):
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--timer",
+    help="Timer to extact (default 'Total Runtime')",
+    default="Total Runtime",
+)
+parser.add_argument(
+    "--output",
+    help="Output CSV file"
+)
 
-  times=[]
-  
-  for s in range(1,4):
+args = parser.parse_args()
 
-    filename=f'scaling.{i}.{s}.out.timing.csv'
-    print(filename)
-    df = pd.read_csv(filename)
+timer = args.timer
+output_filename = args.output
 
-    time =df.loc[df['Timer'] == 'Total Runtime']['Time (s)'].iloc[0]
+times_df = pd.DataFrame({"Size": [], "Time 1": [], "Time 2": [], "Time 3": []})
 
-    print(time)
+for i in range(1, 4):
 
-    times.append(time)
-  
-  new_row = pd.DataFrame({'Size': [i], f'Time 1': [times[0]], f'Time 2': [times[1]], f'Time 3': [times[2]]})
-    
-  times_df= pd.concat([times_df, new_row], ignore_index=True)
+    times = []
+
+    for s in range(1, 4):
+
+        filename = f"scaling.{i}.{s}.out.timing.csv"
+        df = pd.read_csv(filename)
+
+        time = df.loc[df["Timer"] == timer]["Time (s)"].iloc[0]
+
+        times.append(time)
+
+    new_row = pd.DataFrame(
+        {
+            "Size": [i],
+            f"Time 1": [times[0]],
+            f"Time 2": [times[1]],
+            f"Time 3": [times[2]],
+        }
+    )
+
+    times_df = pd.concat([times_df, new_row], ignore_index=True)
 
 
-times_df['mean'] = times_df[['Time 1', 'Time 2', 'Time 3']].mean(axis=1)
-times_df['stddev'] = times_df[['Time 1', 'Time 2', 'Time 3']].std(axis=1)
-times_df['max'] = times_df[['Time 1', 'Time 2', 'Time 3']].max(axis=1)
-times_df['min'] = times_df[['Time 1', 'Time 2', 'Time 3']].min(axis=1)
+times_df["mean"] = times_df[["Time 1", "Time 2", "Time 3"]].mean(axis=1)
+times_df["stddev"] = times_df[["Time 1", "Time 2", "Time 3"]].std(axis=1)
+times_df["max"] = times_df[["Time 1", "Time 2", "Time 3"]].max(axis=1)
+times_df["min"] = times_df[["Time 1", "Time 2", "Time 3"]].min(axis=1)
 
 print(times_df)
+
+times_df.to_csv(output_filename, index=False)
 
 # temp_file=tempfile.TemporaryFile(mode='w+')
 
@@ -54,17 +78,14 @@ print(times_df)
 
 # csvReader=csv.reader(temp_file)
 
-# 
+#
 
 # for line in csvReader :
 
-#     
+#
 #     time = line[-1]
 
-#     
+#
 
 # for key,value in times.items() :
 #   print(f'{key},{",".join(value)}')
-
-
-

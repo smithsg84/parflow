@@ -1,0 +1,84 @@
+#!/bin/env python3
+"""Plot scaling studies
+"""
+from matplotlib import dates
+from matplotlib import pyplot as plt
+from matplotlib.font_manager import FontProperties
+from matplotlib.ticker import MaxNLocator
+from pathlib import Path
+import argparse
+import csv
+import datetime
+import numpy as np
+#import sympy
+import sys
+import pandas as pd
+
+
+def main(arguments):
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('-i', '--image-output-filename', help="Filename of plot", default='out.png')
+    parser.add_argument('-t', '--title', help="Title of plot", default='CPU vs CUDA Scaling : Default Richards')
+    parser.add_argument('--times1', help="CSV timing", default='cpu-times.csv')
+    parser.add_argument('--times2', help="CSV timeng", default='cuda-times.csv')
+    parser.add_argument('--label1', help="Label 1", default='CPU')
+    parser.add_argument('--label2', help="Label 2", default='CUDA')
+    args = parser.parse_args(arguments)
+
+    title=args.title
+    output_file=args.image_output_filename
+    times1_filename=Path(args.times1)
+    times2_filename=Path(args.times2)
+
+    label1=args.label1
+    label2=args.label2
+
+    axis_font = FontProperties()
+    axis_font.set_weight('bold')
+    axis_font.set_size('large')
+
+    fig, axs = plt.subplots(1, 1)
+
+    ###
+
+    df = pd.read_csv(times1_filename)
+    
+    x_data = df['Size'].to_numpy()
+    y_data = df['mean'].to_numpy()
+
+    line,=axs.plot(x_data, y_data, label=label1, marker="o")
+
+    ### 
+
+    df = pd.read_csv(times2_filename)
+    
+    x_data = df['Size'].to_numpy()
+    y_data = df['mean'].to_numpy()
+
+    line,=axs.plot(x_data, y_data, label=label2, marker="o")
+
+    ###
+
+    
+    axs.legend()
+
+    axs.set_xlabel("Size")
+    axs.set_ylabel("Time (s)")
+
+    fig.suptitle(f"{title}", fontsize=18)
+            
+    fig.set_size_inches(10, 4*2)
+    fig.tight_layout()
+
+    plt.savefig(output_file, bbox_inches="tight")
+
+    plt.show()
+
+    plt.close()
+
+
+
+if __name__ == '__main__' :
+    sys.exit(main(sys.argv[1:]))
