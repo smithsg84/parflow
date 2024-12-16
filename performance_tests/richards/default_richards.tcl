@@ -322,8 +322,8 @@ pfset KnownSolution                                    NoKnownSolution
 # Set solver parameters
 #-----------------------------------------------------------------------------
 pfset Solver                                             Richards
-#pfset Solver.MaxIter                                     1000000
-pfset Solver.MaxIter                                     10
+pfset Solver.MaxIter                                     1000000
+#pfset Solver.MaxIter                                     10
 
 pfset Solver.Nonlinear.MaxIter                           10
 pfset Solver.Nonlinear.ResidualTol                       1e-9

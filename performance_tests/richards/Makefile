@@ -24,6 +24,10 @@ scaling:
 post-cpu:
 	./extract_times --output=cpu-times.csv
 
+.PHONY: plot post-seq
+post-seq:
+	./extract_times --output=seq-times.csv
+
 .PHONY: plot post-cuda
 post-cuda:
 	./extract_times --output=cuda-times.csv
@@ -31,7 +35,6 @@ post-cuda:
 .PHONY: plot
 plot:
 	./plot
-
 
 clean:
 	@rm -f gmon.sum gmon.txt
