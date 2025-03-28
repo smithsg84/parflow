@@ -11,9 +11,9 @@ PARFLOW=$(PARFLOW_DIR)/bin/parflow
 default: scaling
 
 scaling:
-	@for i in `seq 3`; do                                  \
+	@for s in `seq 1 14`; do                                  \
 	   echo $${s};                                         \
-	   for s in `seq 8` ; do	                       \
+	   for i in `seq 3` ; do	                       \
 	       name=scaling.$${s}.$${i};                       \
 	       echo "Running $${name}";	                       \
 	       /usr/bin/time --format "CSV,Total Time,$${s},$${i},%e" tclsh scaling.tcl $${s} $${name}; \
