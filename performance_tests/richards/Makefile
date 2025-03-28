@@ -8,12 +8,12 @@ include $(PARFLOW_DIR)/config/Makefile.config
 
 PARFLOW=$(PARFLOW_DIR)/bin/parflow
 
-default: 
+default: scaling
 
 scaling:
-	@for s in `seq 8`; do                                  \
+	@for i in `seq 3`; do                                  \
 	   echo $${s};                                         \
-	   for i in `seq 3` ; do	                       \
+	   for s in `seq 8` ; do	                       \
 	       name=scaling.$${s}.$${i};                       \
 	       echo "Running $${name}";	                       \
 	       /usr/bin/time --format "CSV,Total Time,$${s},$${i},%e" tclsh scaling.tcl $${s} $${name}; \
@@ -40,6 +40,22 @@ big:
 	done
 	@gprof $(PARFLOW) gmon.sum > big_domain.gprof.txt
 
+.PHONY: plot post-cpu
+post-cpu:
+	./extract_times --output=cpu-times.csv
+
+.PHONY: plot post-seq
+post-seq:
+	./extract_times --output=seq-times.csv
+
+.PHONY: plot post-cuda
+post-cuda:
+	./extract_times --output=cuda-times.csv
+
+.PHONY: plot
+plot:
+	./plot
+
 clean:
 	@rm -f gmon.sum gmon.txt
 	@rm -f gmon.out
@@ -54,3 +70,7 @@ clean:
 	@rm -f *.out.txt
 	@rm -f rsl.*
 	@rm -f *.pfmetadata
+
+veryclean: clean
+	@rm -f *.csv
+	@rm -f out.png

@@ -333,11 +333,23 @@ pfset Solver.Nonlinear.DerivativeEpsilon                 1e-2
 
 pfset Solver.Linear.KrylovDimension                      10
 
-pfset Solver.Linear.Preconditioner                       PFMG 
+pfset Solver.Linear.Preconditioner                       MGSemi
 pfset Solver.Linear.Preconditioner.MGSemi.MaxIter        1
 pfset Solver.Linear.Preconditioner.MGSemi.MaxLevels      100
 
-pfset Solver.PrintVelocities True
+pfset Solver.PrintinitialConditions False
+pfset Solver.PrintSubsurfData False
+pfset Solver.PrintSlopes False
+pfset Solver.PrintMannings False
+pfset Solver.PrintSpecificStorage False
+pfset Solver.PrintTop False
+pfset Solver.PrintMask  False
+pfset Solver.PrintPressure False
+pfset Solver.PrintSaturation False
+pfset Solver.PrintConcentration False
+pfset Solver.PrintVelocities False
+pfset Solver.PrintWells  False
+pfset Solver.PrintReservoirs False
 
 #-----------------------------------------------------------------------------
 # Run and Unload the ParFlow output files
