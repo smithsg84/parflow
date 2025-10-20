@@ -67,6 +67,7 @@ endif(CMAKE_CUDA_COMPILER)
 if(PARFLOW_ACCELERATOR_BACKEND STREQUAL "none")
 elseif(PARFLOW_ACCELERATOR_BACKEND STREQUAL "cuda")
   set(PARFLOW_HAVE_CUDA "yes")
+
   if(NOT DEFINED KOKKOS_ROOT)
     # Initialize CUDA
     include(CheckLanguage)
@@ -77,10 +78,10 @@ elseif(PARFLOW_ACCELERATOR_BACKEND STREQUAL "cuda")
       set(CMAKE_CUDA_STANDARD 14)
       set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-extended-lambda")
       if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
-	set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode=arch=compute_60,code=sm_60 -gencode=arch=compute_70,code=sm_70")
-	if(CMAKE_CUDA_COMPILER_VERSION VERSION_GREATER 11)
+        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode=arch=compute_60,code=sm_60 -gencode=arch=compute_70,code=sm_70")
+        if(CMAKE_CUDA_COMPILER_VERSION VERSION_GREATER 11)
           set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode=arch=compute_80,code=sm_80")
-	endif(CMAKE_CUDA_COMPILER_VERSION VERSION_GREATER 11)
+        endif(CMAKE_CUDA_COMPILER_VERSION VERSION_GREATER 11)
       endif(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
       set(CMAKE_CUDA_FLAGS_DEBUG "${CMAKE_CUDA_FLAGS_DEBUG} -G --ptxas-options=-v")
       set(CMAKE_CUDA_HOST_COMPILER mpicxx)
@@ -105,43 +106,43 @@ elseif(PARFLOW_ACCELERATOR_BACKEND STREQUAL "kokkos")
 elseif(PARFLOW_ACCELERATOR_BACKEND STREQUAL "omp")
   message(STATUS "ACCELERATOR: Compiling ParFlow with backend accelerator OpenMP")
   # Enable C and CXX -fopenmp flag, enable ParFlow defines.
-  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+  find_package(OpenMP REQUIRED)
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${OpenMP_Fortran_FLAGS}")
   set(PARFLOW_HAVE_OMP "yes")
 else()
   message(FATAL_ERROR "ERROR: Unknown backend type! PARFLOW_ACCELERATOR_BACKEND=${PARFLOW_ACCELERATOR_BACKEND} does not exist!")
 endif()
 
-# Include RapidsAI Memory Manager (RMM) for pool allocation
+# Include Umpire or RMM memory manager for pool allocation
 if((${PARFLOW_HAVE_CUDA}) OR (${PARFLOW_HAVE_KOKKOS}))
-  if(DEFINED RMM_ROOT)
-    find_path(RMM_INCLUDE "rmm" HINTS "${RMM_ROOT}/include")
-    find_library(RMM_LIBRARY "rmm" HINTS "${RMM_ROOT}/lib")
-    if(RMM_INCLUDE AND RMM_LIBRARY)
-      message(STATUS "RMM: RMM_LIBRARY set to ${RMM_LIBRARY}")
-      message(STATUS "RMM: RMM_INCLUDE set to ${RMM_INCLUDE}")
-      add_library(rmm SHARED IMPORTED ${RMM_LIBRARY})
-      set_target_properties(rmm PROPERTIES IMPORTED_LOCATION ${RMM_LIBRARY})
-    # PARFLOW_HAVE_RMM is not defined in parflow_config.h because because it is
-    # only set for the compilation of parflow_exe, parflow_lib, and kinsol sources.
-    # RMM must be initialized before it is used, so, for example,
-    # the amps tests would fail if used across all compiles.
-      set(PARFLOW_HAVE_RMM "yes")
-    else(RMM_INCLUDE AND RMM_LIBRARY)
-      message(FATAL_ERROR "ERROR: RMM installation not found")
-    endif(RMM_INCLUDE AND RMM_LIBRARY)
+
+  if (DEFINED umpire_ROOT AND DEFINED rmm_ROOT)
+    message(FATAL_ERROR "ERROR: Cannot have both Umpire and RMM enabled at the same time.")
+  endif(DEFINED umpire_ROOT AND DEFINED rmm_ROOT)
+  
+  if(DEFINED umpire_ROOT)
+    find_package(umpire REQUIRED)
+    set(PARFLOW_HAVE_UMPIRE "yes")
+    message(STATUS "ACCELERATOR: Compiling with CUDA and Umpire")
+  endif(DEFINED umpire_ROOT)
+  
+  if(DEFINED rmm_ROOT)
+    find_package(rmm REQUIRED)
+    set(PARFLOW_HAVE_RMM "yes")
     if(${PARFLOW_HAVE_CUDA}) 
       message(STATUS "ACCELERATOR: Compiling with CUDA and RMM")
     else(${PARFLOW_HAVE_CUDA}) 
       message(STATUS "ACCELERATOR: Compiling with Kokkos and RMM")
     endif(${PARFLOW_HAVE_CUDA}) 
-  else(DEFINED RMM_ROOT)
+  else(DEFINED rmm_ROOT)
     if(${PARFLOW_HAVE_CUDA}) 
       message(STATUS "ACCELERATOR: Compiling with CUDA (RMM not used)")
     else(${PARFLOW_HAVE_CUDA}) 
       message(STATUS "ACCELERATOR: Compiling with Kokkos (RMM not used)")
     endif(${PARFLOW_HAVE_CUDA}) 
-  endif(DEFINED RMM_ROOT)
+  endif(DEFINED rmm_ROOT)
 endif((${PARFLOW_HAVE_CUDA}) OR (${PARFLOW_HAVE_KOKKOS}))
 
 #-----------------------------------------------------------------------------
@@ -224,17 +225,10 @@ endif ()
 
 # OAS3
 if (${PARFLOW_AMPS_LAYER} STREQUAL "oas3")
-  find_package(OASIS)
+  find_package(OASIS REQUIRED)
   if (OASIS_FOUND)
-    find_package(NetCDF-Fortran)
-    if (NetCDF-Fortran_FOUND)
-      set (PARFLOW_HAVE_OAS3 "yes")
-      set (HAVE_OAS3 ${PARFLOW_HAVE_OAS3})
-    else (NetCDF-Fortran_FOUND)
-      message(FATAL_ERROR "ERROR: NetCDF-Fortran is required when compiling with PARFLOW_AMPS_LAYER=oas3 (check NETCDF_Fortran_ROOT variable)")
-    endif (NetCDF-Fortran_FOUND)
-  else (OASIS_FOUND)
-    message(FATAL_ERROR "ERROR: OASIS is required when compiling with PARFLOW_AMPS_LAYER=oas3 (check OAS3_ROOT variable)")
+    set (PARFLOW_HAVE_OAS3 "yes")
+    set (HAVE_OAS3 ${PARFLOW_HAVE_OAS3})
   endif (OASIS_FOUND)
 endif (${PARFLOW_AMPS_LAYER} STREQUAL "oas3")
 
@@ -251,6 +245,30 @@ if ( ${PARFLOW_AMPS_LAYER} IN_LIST PARFLOW_AMPS_LAYER_REQUIRE_MPI )
     set(PARFLOW_HAVE_MPI "yes")
     set(HAVE_MPI ${PARFLOW_HAVE_MPI})
     message(STATUS "Found MPIEXEC: ${MPIEXEC}")    
+
+    # Need to pass MPI include header to nvcc to avoid missing <mpi.h> error at amps.h.
+    if (${PARFLOW_HAVE_CUDA})
+      if (MPI_C_INCLUDE_DIRS)
+        # Construct the compiler string for the include directories.
+        foreach(dir ${MPI_C_INCLUDE_DIRS})
+          string(APPEND CUDA_MPI_INCLUDES "-I${dir} ")
+        endforeach()
+      else()
+        # Guess MPI include dir from MPI_HOME (if it exists)
+        # https://gitlab.kitware.com/cmake/cmake/-/blob/master/Modules/FindMPI.cmake?ref_type=heads#L120
+        if(DEFINED CACHE{MPI_HOME})
+          set(CUDA_MPI_INCLUDES -I${MPI_HOME}/include)
+       elseif(DEFINED ENV{MPI_HOME})
+          set(CUDA_MPI_INCLUDES -I$ENV{MPI_HOME}/include)
+        endif()
+      endif()
+
+      if(CUDA_MPI_INCLUDES)
+        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} ${CUDA_MPI_INCLUDES}")
+      else()
+        message(WARNING "MPI include dir not found. This might cause compile problems when building CUDA sources with MPI headers.")
+      endif()
+    endif()
   endif (${MPI_C_FOUND})
 
 endif ( ${PARFLOW_AMPS_LAYER} IN_LIST PARFLOW_AMPS_LAYER_REQUIRE_MPI )
@@ -282,11 +300,15 @@ endif (${PARFLOW_ENABLE_SILO} OR DEFINED SILO_ROOT)
 #-----------------------------------------------------------------------------
 option(PARFLOW_ENABLE_NETCDF "Build with NetCDF" "OFF")
 if (${PARFLOW_ENABLE_NETCDF} OR DEFINED NETCDF_DIR OR DEFINED NETCDF_INCLUDE_DIR OR DEFINED NETCDF_LIBRARY)
-  find_package (NetCDF)
+  find_package (NetCDF REQUIRED)
   if (${NetCDF_FOUND})
     set(PARFLOW_HAVE_NETCDF "yes")
     set(HAVE_NETCDF ${PARFLOW_HAVE_NETCDF})
     find_package(CURL)
+    if (NOT NETCDF_HAS_PARALLEL)
+      # ParFlow requires parallel NetCDF header file (used in parflow_netcdf.h and write_parflow_netcdf.c).
+      message(FATAL_ERROR "ParFlow requires NetCDF with parallel support.")
+    endif()
   endif (${NetCDF_FOUND})
 endif (${PARFLOW_ENABLE_NETCDF} OR DEFINED NETCDF_DIR OR DEFINED NETCDF_INCLUDE_DIR OR DEFINED NETCDF_LIBRARY)
 
@@ -309,6 +331,21 @@ if (${PARFLOW_ENABLE_HDF5} OR DEFINED HDF5_ROOT)
     set(HAVE_HDF5 ${PARFLOW_HAVE_HDF5})
   endif (${HDF5_FOUND})
 endif (${PARFLOW_ENABLE_HDF5} OR DEFINED HDF5_ROOT)
+
+#-----------------------------------------------------------------------------
+# PDI
+#-----------------------------------------------------------------------------
+set (PARFLOW_ENABLE_PDI False CACHE BOOL "Build with PDI")
+if (${PARFLOW_ENABLE_PDI} OR DEFINED PDI_ROOT)
+  find_package(PDI)
+  if (${PDI_FOUND})
+    set(PARFLOW_HAVE_PDI "yes")
+    # Additional dependencies required when PDI is enabled.
+    # These libraries must be found to ensure proper functionality.
+    find_package(PARACONF REQUIRED)
+    find_package(SPDLOG REQUIRED)
+  endif (${PDI_FOUND})
+endif (${PARFLOW_ENABLE_PDI} OR DEFINED PDI_ROOT)
 
 #-----------------------------------------------------------------------------
 # Hypre
@@ -357,11 +394,13 @@ endif (${PARFLOW_ENABLE_SZLIB} OR DEFINED SZLIB_ROOT)
 #-----------------------------------------------------------------------------
 option(PARFLOW_ENABLE_SUNDIALS "Build with SUNDIALS" "OFF")
 if (${PARFLOW_ENABLE_SUNDIALS} OR DEFINED SUNDIALS_ROOT)
-  find_package(SUNDIALS COMPONENTS sundials_cvode sundials_kinsol)
+  find_package(SUNDIALS COMPONENTS sundials_cvode sundials_kinsol sundials_core sundials_sunlinsolspgmr)
   if (${SUNDIALS_FOUND})
     set(PARFLOW_HAVE_SUNDIALS "yes")
     set(HAVE_SUNDIALS ${PARFLOW_HAVE_SUNDIALS})
   endif (${SUNDIALS_FOUND})
+else ()
+    message (STATUS "Found KINSOL: embedded")
 endif (${PARFLOW_ENABLE_SUNDIALS} OR DEFINED SUNDIALS_ROOT)
 
 #-----------------------------------------------------------------------------
@@ -519,7 +558,7 @@ check_symbol_exists(mallinfo malloc.h PARFLOW_HAVE_MALLINFO)
 option(PARFLOW_HAVE_CLM "Compile with CLM" "OFF")
 
 if ( ${PARFLOW_HAVE_CLM} )
-  # Make true value match autoconf value; for some backwards compatiblity
+  # Make true value match autoconf value; for some backwards compatibility
   set(PARFLOW_HAVE_CLM "yes")
   set(HAVE_CLM ${PARFLOW_HAVE_CLM})
 
@@ -574,7 +613,7 @@ include_directories ("${PROJECT_BINARY_DIR}/include")
 
 option(PARFLOW_ENABLE_PYTHON "Build python module for running ParFlow" "FALSE")
 if (PARFLOW_ENABLE_PYTHON)
-  find_package(Python3 3.6 QUIET REQUIRED COMPONENTS Interpreter)
+  find_package(Python3 3.7 QUIET REQUIRED COMPONENTS Interpreter)
   set(PARFLOW_PYTHON_DEPENDS)
   set(PARFLOW_HAVE_PYTHON)
   set(PARFLOW_PYTHON "${CMAKE_INSTALL_PREFIX}/py-env/bin/python3")

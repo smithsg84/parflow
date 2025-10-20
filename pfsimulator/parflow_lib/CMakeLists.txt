@@ -10,7 +10,7 @@ set (SRC_FILES_CONST advect.F
   communication.c
   computation.c
   compute_maximums.c
-  compute_top.c
+  compute_top_and_bottom.c
   compute_patch_top.c
   compute_total_concentration.c
   constantRF.c
@@ -53,6 +53,7 @@ set (SRC_FILES_CONST advect.F
   permeability_face.c
   perturb_lb.c
   pf_hypre.c
+  pf_n_vector.c
   pf_pfmg.c
   pf_pfmg_octree.c
   pf_smg.c
@@ -124,6 +125,7 @@ set (SRC_FILES_CONST advect.F
   write_clm_netcdf.c
   write_parflow_binary.c
   write_parflow_netcdf.c
+  write_parflow_pdi.c
   write_parflow_silo.c
   write_parflow_silo_pmpio.c
 )
@@ -213,10 +215,12 @@ endif(${PARFLOW_HAVE_KOKKOS})
   endif( ${PARFLOW_HAVE_KOKKOS} )
 
   if( ${PARFLOW_HAVE_RMM} )
-    target_link_libraries(pfsimulator rmm)
-    target_include_directories(pfsimulator PRIVATE ${RMM_INCLUDE})
-    target_compile_definitions(pfsimulator PRIVATE PARFLOW_HAVE_RMM)
+    target_link_libraries(pfsimulator rmm::rmm)
   endif( ${PARFLOW_HAVE_RMM} )
+
+  if( ${PARFLOW_HAVE_UMPIRE} )
+    target_link_libraries(pfsimulator umpire)
+  endif( ${PARFLOW_HAVE_UMPIRE} )  
 
 else( (${PARFLOW_HAVE_CUDA}) OR (${PARFLOW_HAVE_KOKKOS}) OR (${PARFLOW_HAVE_OMP}) )
 
@@ -262,7 +266,14 @@ if( ${PARFLOW_BUILD_WITH_CPP} )
     PROPERTIES LANGUAGE CXX)
 endif()
 
-target_link_libraries(pfsimulator pfkinsol amps cjson ${PARFLOW_ETRACE_LIBRARY})
+if (${PARFLOW_HAVE_SUNDIALS})
+  target_include_directories (pfsimulator PUBLIC ${SUNDIALS_INCLUDE_DIR})
+  target_link_libraries (pfsimulator ${SUNDIALS_LIBRARIES})
+else ()
+  target_link_libraries(pfsimulator pfkinsol)
+endif (${PARFLOW_HAVE_SUNDIALS})
+
+target_link_libraries(pfsimulator amps cjson ${PARFLOW_ETRACE_LIBRARY})
 target_include_directories(pfsimulator PUBLIC "../third_party/cjson")
 
 if (${PARFLOW_HAVE_MPI})
@@ -277,7 +288,7 @@ endif(${PARFLOW_HAVE_CLM})
 
 if (${PARFLOW_HAVE_HYPRE})
   target_include_directories (pfsimulator PUBLIC ${HYPRE_INCLUDE_DIR})
-  target_link_libraries (pfsimulator ${HYPRE_LIBRARIES})
+  target_link_libraries (pfsimulator Hypre::Hypre)
 endif (${PARFLOW_HAVE_HYPRE})
 
 if (${PARFLOW_HAVE_MPI})
@@ -298,8 +309,11 @@ if (${PARFLOW_HAVE_SILO})
   target_link_libraries (pfsimulator ${SILO_LIBRARIES})
 endif (${PARFLOW_HAVE_SILO})
 
+if (${PARFLOW_HAVE_PDI})
+  target_include_directories (pfsimulator PUBLIC "${PDI_INCLUDE_DIRS}")
+  target_include_directories (pfsimulator PUBLIC "${PARACONF_INCLUDE_DIRS}")
+endif (${PARFLOW_HAVE_PDI})
+
 if (${PARFLOW_HAVE_NETCDF})
-  target_include_directories (pfsimulator PUBLIC "${netCDF_INCLUDE_DIRS}")
-  target_include_directories (pfsimulator PUBLIC "${NETCDF_INCLUDE_DIRS}")
-  target_link_libraries (pfsimulator ${NETCDF_LIBRARIES})
+  target_link_libraries (pfsimulator NetCDF::NetCDF)
 endif (${PARFLOW_HAVE_NETCDF})

@@ -345,10 +345,10 @@ int main(int argc, char **argv)
     TCLAP::ValueArg<string> inFilenameArg("","mask","Mask filename",false,"mask.pfb","string");
     cmd.add( inFilenameArg );
 
-    TCLAP::ValueArg<string> vtkOutFilenameArg("","vtk","VTK ouput filename",false,"output.vtk","string");
+    TCLAP::ValueArg<string> vtkOutFilenameArg("","vtk","VTK output filename",false,"output.vtk","string");
     cmd.add( vtkOutFilenameArg );
 
-    TCLAP::ValueArg<string> pfsolOutFilenameArg("","pfsol","PFSOL ouput filename",true,"output.pfsol","string");
+    TCLAP::ValueArg<string> pfsolOutFilenameArg("","pfsol","PFSOL output filename",true,"output.pfsol","string");
     cmd.add( pfsolOutFilenameArg );
 
     TCLAP::ValueArg<int> bottomArg("","bottom-patch-label","Bottom index",false,2,"int");
@@ -417,7 +417,7 @@ int main(int argc, char **argv)
   double sx = 0, sy = 0, sz = 0;
   double dz;
 
-  std::vector<Databox*> databox(inFilenames[0].size());
+  std::vector<Databox*> databox(inFilenames.size());
 
   // patch_names = GetStringDefault(key,
   // "left right front back bottom top");

@@ -14,7 +14,7 @@ It should be noted that the keys are “dynamic” in that many are built up
 from values of other keys. For example if you have two wells named
 *northwell* and *southwell* then you will have to set some keys which
 specify the parameters for each well. The keys are built up in a simple
-sort of heirarchy.
+sort of hierarchy.
 
 The following sections contain a description of all of the keys used by
 ParFlow. For an example of input files you can look at the ``test`` subdirectory 
@@ -31,7 +31,7 @@ Strings can contain spaces if you use the proper TCL syntax (i.e. using
 double quotes). These types are standard TCL types. Lists are strings
 but they indicate the names of a series of items. For example you might
 need to specify the names of the geometries. You would do this using
-space seperated names (what we are calling a list) “layer1 layer2
+space separated names (what we are calling a list) “layer1 layer2
 layer3”.
 
 The descriptions that follow are organized into functional areas. An
@@ -378,7 +378,7 @@ input filename which contains the field or solid information.
 *integer* **GeomInput.\ *geometry_input_name*.Value** no default For
 IndicatorField geometry inputs you need to specify the mapping between
 values in the input file and the geometry names. The named geometry will
-be defined whereever the input file is equal to the specifed value.
+be defined wherever the input file is equal to the specified value.
 
 .. container:: list
 
@@ -1907,12 +1907,12 @@ Flow Barriers
 Here, the values for Flow Barriers described in :ref:`FB` can be
 input. These are only available with Solver **Richards** and can be
 specified in X, Y or Z directions independently using ParFlow binary files. These
-barriers are appied at the cell face at the location :math:`i+1/2`. That
+barriers are applied at the cell face at the location :math:`i+1/2`. That
 is a value of :math:`FB_x` specified at :math:`i` will be applied to the
 cell face at :math:`i+1/2` or between cells :math:`i` and
 :math:`i+1`. The same goes for :math:`FB_y` (:math:`j+1/2`) and
 :math:`FB_z` (:math:`k+1/2`). The flow barrier values are unitless and
-mulitply the flux equation as shown in :eq:`qFBx`.
+multiply the flux equation as shown in :eq:`qFBx`.
 
 The format for this section of input is:
 
@@ -2503,7 +2503,7 @@ geometries. Note that only one type of relative permeability may be used
 for the entire problem. However, parameters may be different for that
 type in different geometries. For instance, if the problem consists of
 three geometries, then **VanGenuchten** may be specified with three
-different sets of parameters for the three different goemetries.
+different sets of parameters for the three different geometries.
 However, once **VanGenuchten** is specified, one geometry cannot later
 be specified to have **Data** as its relative permeability. The possible
 values for this key are **Constant, VanGenuchten, Haverkamp, Data,** and
@@ -2907,7 +2907,7 @@ geometries. Note that only one type of saturation may be used for the
 entire problem. However, parameters may be different for that type in
 different geometries. For instance, if the problem consists of three
 geometries, then **VanGenuchten** may be specified with three different
-sets of parameters for the three different goemetries. However, once
+sets of parameters for the three different geometries. However, once
 **VanGenuchten** is specified, one geometry cannot later be specified to
 have **Data** as its saturation. The possible values for this key are
 **Constant, VanGenuchten, Haverkamp, Data, Polynomial** and **PFBFile**.
@@ -3313,7 +3313,7 @@ overland flow routing boundary that solve Maning's equation in
 the traditional cell centered slopes). The key **SeepageFace** simulates
 a boundary that allows flow to exit but keeps the surface pressure at
 zero. Consider a sign flip in top boundary condition values (i.e., outgoing
-fluxes are positve and incomming fluxes are negative). The choice
+fluxes are positive and incoming fluxes are negative). The choice
 **ExactSolution** specifies that an exact known
 solution is to be applied as a Dirichlet boundary condition on the
 respective patch. Note that this does not change according to any cycle.
@@ -3515,36 +3515,6 @@ The choices for this key correspond to pressures as follows.
 
 **XYZTPlus1PermTensor**: 
    :math:`p = xyzt + 1`
-
-Example Script:
-
-.. container:: list
-
-   ::
-
-
-      #---------------------------------------------------------
-      # Initial conditions: water pressure [m]
-      #---------------------------------------------------------
-      # Using a patch is great when you are not using a box domain
-      # If using a box domain HydroStaticDepth is fine
-      # If your RefPatch is z-lower (bottom of domain), the pressure is positive.
-      # If your RefPatch is z-upper (top of domain), the pressure is negative.
-      ### Set water table to be at the bottom of the domain, the top layer is initially dry
-      pfset ICPressure.Type				      "HydroStaticPatch"
-      pfset ICPressure.GeomNames		         "domain"
-      pfset Geom.domain.ICPressure.Value	   2.2
-
-      pfset Geom.domain.ICPressure.RefGeom	"domain"
-      pfset Geom.domain.ICPressure.RefPatch	z-lower
-
-      ### Using a .pfb to initialize
-      pfset ICPressure.Type                  "PFBFile"
-      pfset ICPressure.GeomNames		         "domain"
-      pfset Geom.domain.ICPressure.FileName	"press.00090.pfb"
-
-      pfset Geom.domain.ICPressure.RefGeom	"domain"
-      pfset Geom.domain.ICPressure.RefPatch	"z-upper"
 
 .. _`Boundary Conditions: Saturation`:
 
@@ -3823,6 +3793,36 @@ domain. It is assumed that *geom_name* is “domain” for this key.
 
       pfset Geom.domain.ICPressure.FileName  "ic_pressure.pfb"
 
+Example Script:
+
+.. container:: list
+
+   ::
+
+
+      #---------------------------------------------------------
+      # Initial conditions: water pressure [m]
+      #---------------------------------------------------------
+      # Using a patch is great when you are not using a box domain
+      # If using a box domain HydroStaticDepth is fine
+      # If your RefPatch is z-lower (bottom of domain), the pressure is positive.
+      # If your RefPatch is z-upper (top of domain), the pressure is negative.
+      ### Set water table to be at the bottom of the domain, the top layer is initially dry
+      pfset ICPressure.Type				      "HydroStaticPatch"
+      pfset ICPressure.GeomNames		         "domain"
+      pfset Geom.domain.ICPressure.Value	   2.2
+
+      pfset Geom.domain.ICPressure.RefGeom	"domain"
+      pfset Geom.domain.ICPressure.RefPatch	z-lower
+
+      ### Using a .pfb to initialize
+      pfset ICPressure.Type                  "PFBFile"
+      pfset ICPressure.GeomNames		         "domain"
+      pfset Geom.domain.ICPressure.FileName	"press.00090.pfb"
+
+      pfset Geom.domain.ICPressure.RefGeom	"domain"
+      pfset Geom.domain.ICPressure.RefPatch	"z-upper"
+
 .. _`Initial Conditions: Phase Concentrations`:
 
 Initial Conditions: Phase Concentrations
@@ -3993,7 +3993,7 @@ extraction well.
 
       Wells.test_well.Action "Injection"
 
-*double* **Wells.\ *well_name*.Type** no default This key specfies the
+*double* **Wells.\ *well_name*.Type** no default This key specifies the
 mechanism by which the well works (how ParFlow works with the well data)
 if the input type key is set to **Vectical**. This key can be either
 **Pressure** or **Flux**. A value of **Pressure** indicates that the
@@ -4011,7 +4011,7 @@ condition in the computational cells which define the well.
       Wells.test_well.Type "Flux"
 
 *string* **Wells.\ *well_name*.ExtractionType** no default This key
-specfies the mechanism by which the extraction well works (how ParFlow
+specifies the mechanism by which the extraction well works (how ParFlow
 works with the well data) if the input type key is set to **Recirc**.
 This key can be either **Pressure** or **Flux**. A value of **Pressure**
 indicates that the data provided for the well is in terms of hydrostatic
@@ -4029,7 +4029,7 @@ well.
       Wells.ext_well.ExtractionType "Pressure"
 
 *string* **Wells.\ *well_name*.InjectionType** no default This key
-specfies the mechanism by which the injection well works (how ParFlow
+specifies the mechanism by which the injection well works (how ParFlow
 works with the well data) if the input type key is set to **Recirc**.
 This key can be either **Pressure** or **Flux**. A value of **Pressure**
 indicates that the data provided for the well is in terms of hydrostatic
@@ -4237,7 +4237,7 @@ physical relationships that exist between the phases.
 default This key specifies the volumetric flux for a vectical well if
 the type key is set to **Flux**.
 
-Note only a positive number should be entered, ParFlow assignes the
+Note only a positive number should be entered, ParFlow assigns the
 correct sign based on the chosen action for the well.
 
 .. container:: list
@@ -4449,9 +4449,9 @@ minimum value for the :math:`\bar{S_{f}}` used in the
 
 ::
 
-   pfset Solver.OverlandKinematic.Epsilon 1E-7           ## TCL syntax
+      pfset Solver.OverlandKinematic.Epsilon 1E-7           ## TCL syntax
 
-   <runname>.Solver.OverlandKinematic.Epsilon = 1E-7     ## Python syntax
+      <runname>.Solver.OverlandKinematic.Epsilon = 1E-7     ## Python syntax
 
 
 *string* **Solver.PrintInitialConditions** True This key is used to
@@ -4571,7 +4571,20 @@ intersect the domain.  The data is written as a ParFlow binary file.
       pfset Solver.PrintTop False                    ## TCL syntax
 
       <runname>.Solver.PrintTop = False              ## Python syntax
-      
+
+*string* **Solver.PrintBottom** False This key is used to turn on printing
+of the bottom of domain data.  'BottomZIndex' is a NX * NY file with the Z
+index of the top of the domain.  A value of -1 indicates an (i,j) column does 
+not intersect the domain.The data is written as a ParFlow binary file.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.PrintBottom False                 ## TCL syntax
+
+      <runname>.Solver.PrintBottom = False           ## Python syntax
+
 *string* **Solver.PrintWells** True This key is used to turn on
 collection and printing of the well data. The data is collected at
 intervals given by values in the timing information section. Printing
@@ -4775,21 +4788,226 @@ in the timing information section.
       <runname>.Solver.WriteSiloOverlandSum = True       ## Python syntax
 
 *string* **Solver.WriteSiloTop** False Key used to control writing of
-two Silo files for the top of the domain.  'TopZIndex' is a NX * NY
+two Silo files for the top of the domain. 'TopZIndex' is a NX * NY
 file with the Z index of the top of the domain. 'TopPatch' is the
 Patch index for the top of the domain.  A value of -1 indicates an
 (i,j) column does not intersect the domain.
 
 .. container:: list
 
-
    ::
 
       pfset Solver.WriteSiloTop True                  ## TCL syntax
 
       <runname>.Solver.WriteSiloTop = True            ## Python syntax
-      
-      
+
+*string* **Solver.WriteSiloBottom** False Key used to control writing of
+one Silo file for the bottom of the domain.  'BottomZIndex' is a NX * NY
+file with the Z index of the bottom of the domain. A value of -1 indicates
+an (i,j) column does not intersect the domain.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WriteSiloBottom True               ## TCL syntax
+
+      <runname>.Solver.WriteSiloBottom = True         ## Python syntax
+
+*string* **Solver.WritePDISubsurfData** False This key is used to specify exposing of
+      the subsurface data, Permeability and Porosity to PDI library. The data is
+      exposed after it is generated and before the main time stepping loop - only
+      once during the run. The data is subsequently managed by the PDI
+      plugin according to the specification tree defined in conf.yaml.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDISubsurfData  True            ## TCL syntax
+
+      <runname>.Solver.WritePDISubsurfData = True       ## Python syntax
+
+*string* **Solver.WritePDIMannings** False This key is used to specify exposing of
+      Manning’s roughness data to PDI library. The data exposure is controlled
+      by values in the timing information section and is subsequently managed
+      by the PDI plugin according to the specification tree defined in conf.yaml.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDIMannings  True            ## TCL syntax
+
+      <runname>.Solver.WritePDIMannings = True       ## Python syntax
+
+*string* **Solver.WritePDISlopes** False This key is used to turn on exposure of x
+      and y slope data to PDI library. The data exposure is controlled by values
+      in the timing information section and is subsequently managed by the PDI
+      plugin according to the specification tree defined in conf.yaml.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDISlopes  True            ## TCL syntax
+
+      <runname>.Solver.WritePDISlopes = True       ## Python syntax
+
+*string* **Solver.WritePDIPressure** False This key is used to specify exposure of
+      pressure data to PDI library. The data exposure is controlled by values
+      in the timing information section and is subsequently managed by the PDI
+      plugin according to the specification tree defined in conf.yaml.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDIPressure  True            ## TCL syntax
+
+      <runname>.Solver.WritePDIPressure = True       ## Python syntax
+
+*string* **Solver.WritePDISpecificStorage** False This key is used to specify exposure
+      of specific storage data to PDI library. The data exposure is controlled
+      by values in the timing information section and is subsequently managed by
+      the PDI plugin according to the specification tree defined in conf.yaml.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDISpecificStorage  True            ## TCL syntax
+
+      <runname>.Solver.WritePDISpecificStorage = True       ## Python syntax
+
+*string* **Solver.WritePDIVelocities** False This key is used to turn on exposure of
+      x,y,and z velocity data to PDI library. The data exposure is controlled by
+      values in the timing information section and is subsequently managed by the
+      PDI plugin according to the specification tree defined in conf.yaml.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDIVelocities  True            ## TCL syntax
+
+      <runname>.Solver.WritePDIVelocities = True       ## Python syntax
+
+*string* **Solver.WritePDISaturation** False This key is used to specify exposre of
+      the saturation data to PDI library. The data exposure is controlled by
+      values in the timing information section and is subsequently managed by
+      the PDI plugin according to the specification tree defined in conf.yaml.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDISaturation  True            ## TCL syntax
+
+      <runname>.Solver.WritePDISaturation = True       ## Python syntax
+
+*string* **Solver.WritePDIMask** False This key is used to specify exposure of mask
+      data to PDI library. The mask contains values equal to one for active
+      cells and zero for inactive cells. The data exposure is controlled by
+      values in the timing information section and is subsequently managed by
+      the PDI plugin according to the specification tree defined in conf.yaml.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDIMask  True            ## TCL syntax
+
+      <runname>.Solver.WritePDIMask = True       ## Python syntax
+
+*string* **Solver.WritePDIDZMultiplier** False This key is used to specifiy the exposrue
+      of DZ multipliers to PDI library.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDIDZMultiplier  True            ## TCL syntax
+
+      <runname>.Solver.WritePDIDZMultiplier = True       ## Python syntax
+
+*string* **Solver.WritePDIEvapTransSum** False This key is used to specify exposure
+      of evaporation and rainfall flux data to PDI libraary, cumulative amount.
+      This data comes from either clm or from external calls to ParFlow such as
+      WRF. This data is in units of :math:`[L3]`. The data exposure is controlled
+      by values in the timing information section and is subsequently managed by
+      the PDI plugin according to the specification tree defined in conf.yaml.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDIEvapTransSum  True            ## TCL syntax
+
+      <runname>.Solver.WritePDIEvapTransSum = True       ## Python syntax
+
+*string* **Solver.WritePDIEvapTrans** False This key is used to specify exposure
+      of the evaporation and rainfall flux data to PDI library. This data comes
+      from either clm or from external calls to ParFlow such as WRF. This data
+      is in units of :math:`[L3T-1]`. The data exposure is controlled by values
+      in the timing information section and is subsequently managed by the PDI
+      plugin according to the specification tree defined in conf.yaml.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDIEvapTrans  True            ## TCL syntax
+
+      <runname>.Solver.WritePDIEvapTrans = True       ## Python syntax
+
+*string* **Solver.WritePDIOverlandSum** False This key is used to specify
+      calculation and exposrue of the total overland outflow from the domain
+      PDI library as a running cumulative amount. This is integrated along all
+      domain boundaries and is calculated any location that slopes at the edge
+      of the domain point outward. This data is in units of :math:`[L^3]`. The
+      data exposure is controlled by values in the timing information section and
+      is subsequently managed by the PDI plugin according to the specification tree
+      defined in conf.yaml.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDIOverlandSum  True            ## TCL syntax
+
+      <runname>.Solver.WritePDIOverlandSum = True       ## Python syntax    
+
+*string* **Solver.WritePDIOverlandBCFlux** False This key is used to specify the
+      expousre of overland bc flux to PDI library.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDIOverlandBCFlux	True        ## TCL syntax
+      <runname>.Solver.WritePDIOverlandBCFlux = True  ## Python syntax
+
+*string* **Solver.WritePDIWells** False This key is used to specify the
+      expousre of wells data to PDI library.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDIWells	True        ## TCL syntax
+      <runname>.Solver.WritePDIWells = True  ## Python syntax
+
+*string* **Solver.WritePDIConcentration** False This key is used to specify the
+      exposure of concentration data to PDI library. The data exposure is
+      controlled by values in the timing information section.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.WritePDIConcentration	True        ## TCL syntax
+      <runname>.Solver.WritePDIConcentration = True  ## Python syntax
 
 *string* **Solver.TerrainFollowingGrid** False This key specifies that a
 terrain-following coordinate transform is used for solver Richards. This
@@ -4864,7 +5082,7 @@ configured SILO with HDF5 in order to use that option.
 *string* **SILO.CompressionOptions** This key is used to specify the
 SILO compression options. See the SILO manual for the DB_SetCompression
 command for information on available options. NOTE: the options
-avaialable are highly dependent on the configure options when building
+available are highly dependent on the configure options when building
 SILO.
 
 .. container:: list
@@ -5216,7 +5434,7 @@ help with slope errors and issues and provides some diagnostic information.  The
       pfset Solver.SurfacePredictor        True        ## TCL syntax
       <runname>.Solver.SurfacePredictor  = "True"    ## Python syntax
 
-*double* **Solver.SurfacePredictor.PressureValue** 0.00001 This key specifies a surface pressure if the **SurfacePredictor** key above is True and ponded conditions are predicted at a surface cell.  A negative value allows the surface predictor algorithm to esimate the new surface pressure based on surrounding fluxes.
+*double* **Solver.SurfacePredictor.PressureValue** 0.00001 This key specifies a surface pressure if the **SurfacePredictor** key above is True and ponded conditions are predicted at a surface cell.  A negative value allows the surface predictor algorithm to estimate the new surface pressure based on surrounding fluxes.
 
 .. container:: list
 
@@ -5274,7 +5492,7 @@ should be the complete filename. For the transient option
 ParFlow will load one file per timestep, with the form ``filename.00000.pfb``.
 EvapTrans values are considered as sources or sinks in Richards' equation, so
 they have no conflicts with boundary conditions. Consequently, sign flip is not
-required (i.e., incomming flluxes are positive and outgoing fluxes are negative).
+required (i.e., incoming flluxes are positive and outgoing fluxes are negative).
 
 .. container:: list
 
@@ -5684,8 +5902,11 @@ to be active.
       <runname>.Solver.CLM.CLMFileDir = "CLM_Output/"    ## Python syntax
 
 *integer* **Solver.CLM.CLMDumpInterval** 1 This key specifies how often
-output from the ``CLM`` is written. This key is in integer multipliers 
-of the ``CLM`` timestep. Note that ``CLM`` must be compiled and linked 
+output from the ``CLM`` is written. This key is the real
+time interval at which time-dependent output should be written. A value
+of **0** will produce undefined behavior. If the value is negative,
+output will be dumped out every :math:`n` time steps, where :math:`n` is
+the absolute value of the integer part of the value.  Note that ``CLM`` must be compiled and linked 
 at runtime for this option to be active.
 
 .. container:: list
@@ -5786,7 +6007,7 @@ to be active.
       pfset Solver.CLM.FieldCapacity  0.95         ## TCL syntax
       <runname>.Solver.CLM.FieldCapacity = 0.95    ## Python syntax
 
-*string* **Solver.CLM.IrrigationTypes** none This key specifies the form
+*string* **Solver.CLM.IrrigationType** none This key specifies the form
 of the irrigation in ``CLM``. The valid types for this key are **none**, 
 **Spray**, **Drip**, **Instant**.
 
@@ -5794,14 +6015,14 @@ of the irrigation in ``CLM``. The valid types for this key are **none**,
 
    ::
 
-      pfset Solver.CLM.IrrigationTypes "Drip"      ## TCL syntax
-      <runname>.Solver.CLM.IrrigationTypes "Drip"  ## Python syntax
+      pfset Solver.CLM.IrrigationType "Drip"      ## TCL syntax
+      <runname>.Solver.CLM.IrrigationType "Drip"  ## Python syntax
 
 *string* **Solver.CLM.IrrigationCycle** Constant This key specifies the
 cycle of the irrigation in ``CLM``. The valid types for this key are 
 **Constant**, **Deficit**. Note only **Constant** is currently implemented. Constant 
 cycle applies irrigation each day from IrrigationStartTime to 
-IrrigationStopTime in GMT.
+IrrigationStopTime in hours of the day (24-hour time) in GMT.
 
 .. container:: list
 
@@ -5827,8 +6048,8 @@ specifies the start time of the irrigation in ``CLM`` GMT.
 
    ::
 
-      pfset Solver.CLM.IrrigationStartTime 0800          ## TCL syntax
-      <runname>.Solver.CLM.IrrigationStartTime = 0800    ## Python syntax
+      pfset Solver.CLM.IrrigationStartTime 8.0          ## TCL syntax
+      <runname>.Solver.CLM.IrrigationStartTime = 8.0    ## Python syntax
 
 *double* **Solver.CLM.IrrigationStopTime** no default This key specifies
 the stop time of the irrigation in ``CLM`` GMT.
@@ -5837,8 +6058,8 @@ the stop time of the irrigation in ``CLM`` GMT.
 
    ::
 
-      pfset Solver.CLM.IrrigationStopTime 1200        ## TCL syntax
-      <runname>.Solver.CLM.IrrigationStopTime = 1200  ## Python syntax
+      pfset Solver.CLM.IrrigationStopTime 12.0        ## TCL syntax
+      <runname>.Solver.CLM.IrrigationStopTime = 12.0  ## Python syntax
 
 *double* **Solver.CLM.IrrigationThreshold** 0.5 This key specifies the
 threshold value for the irrigation in ``CLM``.
@@ -5854,9 +6075,9 @@ threshold value for the irrigation in ``CLM``.
 atmospheric forcing file input. For example timestep=1, reuse =1 is 
 normal behavior but reuse=2 and timestep=0.5 subdivides the time step 
 using the same ``CLM`` input for both halves instead of needing two files. 
-This is particually useful for large, distributed runs when the user 
+This is particularly useful for large, distributed runs when the user 
 wants to run ParFlow at a smaller timestep than the ``CLM`` 
-forcing. Forcing files will be re-used and total fluxes adjusted 
+forcing. Forcing files will be reused and total fluxes adjusted 
 accordingly without needing duplicate files.
 
 .. container:: list
@@ -5942,6 +6163,21 @@ described below, will also need to be changed.
       pfset Solver.CLM.RootZoneNZ      4     ## TCL syntax
       <runname>.Solver.CLM.RootZoneNZ = 4    ## Python syntax
 
+*integer* **Solver.CLM.RZWaterStress** 0 This key sets the distribution
+of transpiration over the root zone and changes the behavior of plant water limitations.
+As discussed in :cite:p:`Ferguson2016` water stress approaches result in
+different cut-offs for transpiration ().  Two options are currently
+implemented both use the beta-type water stress defined above.  Option 0
+(default) will limit transpiration when the top soil layer drops below
+wilting point, option 1 limits each layer independently.
+
+.. container:: list
+
+   ::
+
+      pfset Solver.CLM.RZWaterStress 1          ## TCL syntax
+      <runname>.Solver.CLM.RZWaterStress = 1    ## Python syntax
+      
 *integer* **Solver.CLM.SoiLayer** 7 This key sets the soil layer, and
 thus the soil depth, that ``CLM`` uses for the seasonal temperature 
 adjustment for all leaf and stem area indices.

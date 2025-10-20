@@ -58,7 +58,7 @@ namespace eval Parflow {
 
     variable PARFLOW_DIR [Parflow::FixupFilename $::env(PARFLOW_DIR)]
 
-    namespace export pfget pfset pfrun pfundist
+    namespace export pfget pfset pfunset pfrun pfundist
 
     namespace export pfStructuredPoints
 
@@ -155,7 +155,7 @@ namespace eval Parflow {
 }
 
 #
-# Output a string that can containg blanks etc to a file
+# Output a string that can containing blanks etc to a file
 #
 proc Parflow::PFWriteComplexString {file string} {
     puts $file [string length $string]
@@ -203,7 +203,15 @@ proc Parflow::pfset { key value } {
 }
 
 #
-# Retreives a value from the DataBase
+# Sets a value in the database
+#
+proc Parflow::pfunset { key } {
+
+    unset Parflow::PFDB($key)
+}
+
+#
+# Retrieves a value from the DataBase
 #
 proc Parflow::pfget { key } {
 
