@@ -187,7 +187,7 @@ pfset Geom.domain.Perm.TensorValZ  1.0
 # need a key for it
 
 pfset SpecificStorage.Type            Constant
-pfset SpecificStorage.GeomNames       ""
+pfset SpecificStorage.GeomNames       "domain"
 pfset Geom.domain.SpecificStorage.Value 1.0e-4
 
 #-----------------------------------------------------------------------------
@@ -201,12 +201,6 @@ pfset Phase.water.Density.Value	1.0
 
 pfset Phase.water.Viscosity.Type	Constant
 pfset Phase.water.Viscosity.Value	1.0
-
-#-----------------------------------------------------------------------------
-# Contaminants
-#-----------------------------------------------------------------------------
-pfset Contaminants.Names			""
-
 
 #-----------------------------------------------------------------------------
 # Gravity
@@ -291,36 +285,6 @@ pfset Patch.bottom.BCPressure.alltime.Value		0.0
 pfset Patch.top.BCPressure.Type			        FluxConst
 pfset Patch.top.BCPressure.Cycle			"constant"
 pfset Patch.top.BCPressure.alltime.Value		0.0
-
-#---------------------------------------------------------
-# Topo slopes in x-direction
-#---------------------------------------------------------
-# topo slopes do not figure into the impes (fully sat) case but we still
-# need keys for them
-
-pfset TopoSlopesX.Type "Constant"
-pfset TopoSlopesX.GeomNames ""
-
-pfset TopoSlopesX.Geom.domain.Value 0.0
-
-#---------------------------------------------------------
-# Topo slopes in y-direction
-#---------------------------------------------------------
-
-pfset TopoSlopesY.Type "Constant"
-pfset TopoSlopesY.GeomNames ""
-
-pfset TopoSlopesY.Geom.domain.Value 0.0
-
-#---------------------------------------------------------
-# Mannings coefficient
-#---------------------------------------------------------
-# mannings roughnesses do not figure into the impes (fully sat) case but we still
-# need a key for them
-
-pfset Mannings.Type "Constant"
-pfset Mannings.GeomNames ""
-pfset Mannings.Geom.domain.Value 0.
 
 #-----------------------------------------------------------------------------
 # Phase sources:

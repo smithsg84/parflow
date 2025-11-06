@@ -269,6 +269,7 @@ void *HBT_delete(HBT *tree, void *obj);
 void *HBT_successor(HBT *tree, void *obj);
 
 void HBT_printf(FILE *file, HBT *tree);
+int HBT_or_visit(FILE *file, int (*visitor)(FILE *, void *), HBT * tree);
 void HBT_scanf(FILE *file, HBT *tree);
 
 /* infinity_norm.c */

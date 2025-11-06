@@ -307,12 +307,14 @@ extern __device__ PFModule *dev_global_ptr_this_pf_module;
  *
  * @param pf_module The module instance
  */
-#define PFModuleFreeInstance(pf_module)                       \
-        (                                                     \
-         ThisPFModule = pf_module,                            \
-         (*(void (*)())(ThisPFModule->free_instance_xtra))(), \
-         FreePFModule(pf_module)                              \
-        )
+#define PFModuleFreeInstance(pf_module)                         \
+  {								\
+	 if (pf_module) {                                       \
+           ThisPFModule = pf_module;                            \
+           (*(void (*)())(ThisPFModule->free_instance_xtra))(); \
+           FreePFModule(pf_module);				\
+	 }                                                      \
+  }
 
 /**
  * Output time variant state associated with this module instance.
@@ -429,11 +431,13 @@ extern __device__ PFModule *dev_global_ptr_this_pf_module;
  * @param pf_module The module instance
  */
 #define PFModuleFreeModule(pf_module)                       \
-        (                                                   \
-         ThisPFModule = pf_module,                          \
-         (*(void (*)())(ThisPFModule->free_public_xtra))(), \
-         FreePFModule(pf_module)                            \
-        )
+  {							    \
+  if(pf_module) {					    \
+    ThisPFModule = pf_module;				    \
+    (*(void (*)())(ThisPFModule->free_public_xtra))();	    \
+    FreePFModule(pf_module);				    \
+  }							    \
+  }
 
 /**
  * Return this size of the temporary data needed by this module instance.

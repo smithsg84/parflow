@@ -71,6 +71,8 @@ using namespace SAMRAI;
 
 int main(int argc, char *argv [])
 {
+  int ret = 0;
+  
   FILE *file = NULL;
 
   FILE *log_file = NULL;
@@ -461,14 +463,34 @@ int main(int argc, char *argv [])
 
     if (!amps_Rank(amps_CommWorld))
     {
-      char filename[2048];
-      sprintf(filename, "%s.pftcl", GlobalsOutFileName);
+      {
+	char filename[2048];
+	sprintf(filename, "%s.pftcl", GlobalsOutFileName);
 
-      file = fopen(filename, "w");
+	file = fopen(filename, "w");
+	
+	IDB_PrintUsage(file, amps_ThreadLocal(input_database));
+	
+	fclose(file);
+      }
 
-      IDB_PrintUsage(file, amps_ThreadLocal(input_database));
-
-      fclose(file);
+      if(FALSE)
+      {
+	char filename[2048];
+	sprintf(filename, "%s.input_errors.txt", GlobalsOutFileName);
+	
+	file = fopen(filename, "w");
+	
+	int check_usage = IDB_CheckUsage(file, amps_ThreadLocal(input_database));
+	
+	fclose(file);
+	
+	if (check_usage)
+	{
+	  InputError("Error: Unused key/values in input.  Check %s for unused keys\n", filename, "");
+	}
+	ret |= check_usage;
+      }
     }
 
     IDB_FreeDB(amps_ThreadLocal(input_database));
@@ -501,5 +523,5 @@ int main(int argc, char *argv [])
   kokkosFinalize();
 #endif
 
-  return 0;
+  return ret;
 }

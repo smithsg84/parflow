@@ -127,14 +127,23 @@ void          SetProblemData(
     PFModuleInvokeType(SpecStorageInvoke, specific_storage,                   //sk
                        (problem_data,
                         ProblemDataSpecificStorage(problem_data)));
-    PFModuleInvokeType(SlopeInvoke, x_slope,                   //sk
-                       (problem_data,
-                        ProblemDataTSlopeX(problem_data),
-                        ProblemDataPorosity(problem_data)));
-    PFModuleInvokeType(SlopeInvoke, y_slope,                   //sk
-                       (problem_data,
-                        ProblemDataTSlopeY(problem_data),
-                        ProblemDataPorosity(problem_data)));
+
+    if (x_slope)
+    {
+      PFModuleInvokeType(SlopeInvoke, x_slope,                   //sk
+			 (problem_data,
+			  ProblemDataTSlopeX(problem_data),
+			  ProblemDataPorosity(problem_data)));
+    }
+
+    if (y_slope)
+    {
+      PFModuleInvokeType(SlopeInvoke, y_slope,                   //sk
+			 (problem_data,
+			  ProblemDataTSlopeY(problem_data),
+			  ProblemDataPorosity(problem_data)));
+    }
+    
     PFModuleInvokeType(ChannelWidthInvoke, wc_x,
                        (problem_data,
                         ProblemDataChannelWidthX(problem_data),
@@ -143,10 +152,15 @@ void          SetProblemData(
                        (problem_data,
                         ProblemDataChannelWidthY(problem_data),
                         ProblemDataPorosity(problem_data)));
-    PFModuleInvokeType(ManningsInvoke, mann,                   //sk
-                       (problem_data,
-                        ProblemDataMannings(problem_data),
-                        ProblemDataPorosity(problem_data)));
+
+    if (mann)
+    {
+      PFModuleInvokeType(ManningsInvoke, mann,                   //sk
+			 (problem_data,
+			  ProblemDataMannings(problem_data),
+			  ProblemDataPorosity(problem_data)));
+    }
+    
     PFModuleInvokeType(dzScaleInvoke, dz_mult,                   //RMM
                        (problem_data,
                         ProblemDataZmult(problem_data)));
@@ -238,12 +252,20 @@ PFModule  *SetProblemDataInitInstanceXtra(
                               ProblemPorosity(problem), (grid, temp_data));
     (instance_xtra->specific_storage) =                                       //sk
                                         PFModuleNewInstance(ProblemSpecStorage(problem), ());
-    (instance_xtra->x_slope) =                                       //sk
-                               PFModuleNewInstanceType(SlopeInitInstanceXtraInvoke,
-                                                       ProblemXSlope(problem), (grid, grid2d));
-    (instance_xtra->y_slope) =                                       //sk
-                               PFModuleNewInstanceType(SlopeInitInstanceXtraInvoke,
-                                                       ProblemYSlope(problem), (grid, grid2d));
+
+    if (ProblemXSlope(problem))
+    {
+      (instance_xtra->x_slope) =                                       //sk
+	PFModuleNewInstanceType(SlopeInitInstanceXtraInvoke,
+				ProblemXSlope(problem), (grid, grid2d));
+    }
+
+    if (ProblemYSlope(problem))
+    {
+      (instance_xtra->y_slope) =                                       //sk
+	PFModuleNewInstanceType(SlopeInitInstanceXtraInvoke,
+				ProblemYSlope(problem), (grid, grid2d));
+    }
 
     (instance_xtra->wc_x) =
       PFModuleNewInstanceType(ChannelWidthInitInstanceXtraInvoke,
@@ -252,9 +274,12 @@ PFModule  *SetProblemDataInitInstanceXtra(
       PFModuleNewInstanceType(ChannelWidthInitInstanceXtraInvoke,
                               ProblemYChannelWidth(problem), (grid, grid2d));
 
-    (instance_xtra->mann) =                                       //sk
-                            PFModuleNewInstanceType(ManningsInitInstanceXtraInvoke,
-                                                    ProblemMannings(problem), (grid, grid2d));
+    if (ProblemMannings(problem))
+    {
+      (instance_xtra->mann) =                                       //sk
+	PFModuleNewInstanceType(ManningsInitInstanceXtraInvoke,
+				ProblemMannings(problem), (grid, grid2d));
+    }
     (instance_xtra->dz_mult) =                                      //RMM
                                PFModuleNewInstance(ProblemdzScale(problem), ());
 
@@ -293,16 +318,30 @@ PFModule  *SetProblemDataInitInstanceXtra(
                               (instance_xtra->porosity),
                               (grid, temp_data));
     PFModuleReNewInstance((instance_xtra->specific_storage), ());        //sk
-    PFModuleReNewInstanceType(SlopeInitInstanceXtraInvoke,
-                              (instance_xtra->x_slope), (grid, grid2d));        //sk
-    PFModuleReNewInstanceType(SlopeInitInstanceXtraInvoke,
-                              (instance_xtra->y_slope), (grid, grid2d));        //sk
+
+    if ((instance_xtra->x_slope))
+    {
+      PFModuleReNewInstanceType(SlopeInitInstanceXtraInvoke,
+				(instance_xtra->x_slope), (grid, grid2d));        //sk
+    }
+
+    if (instance_xtra->y_slope)
+    {
+      PFModuleReNewInstanceType(SlopeInitInstanceXtraInvoke,
+				(instance_xtra->y_slope), (grid, grid2d));        //sk
+    }
+    
     PFModuleReNewInstanceType(ChannelWidthInitInstanceXtraInvoke,
                               (instance_xtra->wc_x), (grid, grid2d));
     PFModuleReNewInstanceType(ChannelWidthInitInstanceXtraInvoke,
                               (instance_xtra->wc_y), (grid, grid2d));
-    PFModuleReNewInstanceType(ManningsInitInstanceXtraInvoke,
-                              (instance_xtra->mann), (grid, grid2d));        //sk
+
+    if (instance_xtra->mann)
+    {
+      PFModuleReNewInstanceType(ManningsInitInstanceXtraInvoke,
+				(instance_xtra->mann), (grid, grid2d));        //sk
+    }
+    
     PFModuleReNewInstance((instance_xtra->dz_mult), ());        //RMM
     PFModuleReNewInstance((instance_xtra->FBx), ());        //RMM
     PFModuleReNewInstance((instance_xtra->FBy), ());        //RMM

@@ -52,7 +52,7 @@ void Solve()
   solver = PFModuleNewInstance(amps_ThreadLocal(Solver_module), ());
   EndTiming(SolverSetupTimingIndex);
 
-  BeginTiming(SolverTimingIndex);
+   BeginTiming(SolverTimingIndex);
   PFModuleInvokeType(void (*)(void), solver, ());
   EndTiming(SolverTimingIndex);
 

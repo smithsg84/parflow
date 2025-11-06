@@ -151,6 +151,25 @@ void IDB_PrintUsage(FILE *file, IDB *database)
   HBT_printf(file, database);
 }
 
+
+int IDB_CheckEntry(FILE *file, void *obj)
+{
+  IDB_Entry *entry = (IDB_Entry*)obj;
+
+  if (!entry->used)
+  {
+    fprintf(file, "Key: \"%s\" Value: \"%s\" was not used\n", entry->key, entry->value);
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+int IDB_CheckUsage(FILE *file, IDB *database)
+{
+  return HBT_or_visit(file, IDB_CheckEntry, database);
+}
+
 char *IDB_GetString(IDB *database, const char *key)
 {
   IDB_Entry lookup_entry;

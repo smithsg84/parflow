@@ -305,7 +305,7 @@ PFModule  *PhaseMobilityNewPublicXtra(
 
   for (i = 0; i < num_phases; i++)
   {
-    sprintf(key, "Phase.%s.Density.Type",
+    sprintf(key, "Phase.%s.Mobility.Type",
             NA_IndexToName(GlobalsPhaseNames, i));
 
     switch_name = GetString(key);

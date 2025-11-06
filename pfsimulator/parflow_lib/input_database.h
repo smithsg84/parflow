@@ -145,6 +145,17 @@ void IDB_FreeDB(IDB *database);
 void IDB_PrintUsage(FILE *file, IDB *database);
 
 /**
+ * Checks the database for keys that have not been used.
+ * Writes key/values that have not been used to the file
+ * specified.
+ *
+ * @param file  The File pointer to print the information to
+ * @param database The database to print usage information for
+ * @return returns true if no unused key/values have been found.
+ */
+int IDB_CheckUsage(FILE *file, IDB *database);
+
+/**
  * Get an input string from the input database.  If the key is not
  * found print an error and exit.
  *

@@ -140,7 +140,7 @@ Problem   *NewProblem(
   GlobalsPhaseNames = NA_NewNameArray(phases);
   num_phases = ProblemNumPhases(problem) = NA_Sizeof(GlobalsPhaseNames);
 
-  contaminants = GetString("Contaminants.Names");
+  contaminants = GetStringDefault("Contaminants.Names","");
   GlobalsContaminatNames = NA_NewNameArray(contaminants);
   num_contaminants = ProblemNumContaminants(problem) =
     NA_Sizeof(GlobalsContaminatNames);
@@ -159,10 +159,36 @@ Problem   *NewProblem(
   for (i = 0; i < num_phases; i++)
   {
     /* SGS need to add switch on type */
-    sprintf(key, "Phase.%s.Viscosity.Value",
+    switch_na = NA_NewNameArray("Constant EquationOfState");
+    
+    sprintf(key, "Phase.%s.Viscosity.Type",
             NA_IndexToName(GlobalsPhaseNames, i));
-    problem->phase_viscosity[i] = GetDouble(key);
-  }
+
+    switch_name = GetString(key);
+
+    int type = NA_NameToIndexExitOnError(switch_na, switch_name, key);
+
+    switch (type)
+    {
+      case 0:
+      {
+	sprintf(key, "Phase.%s.Viscosity.Value",
+		NA_IndexToName(GlobalsPhaseNames, i));
+	problem->phase_viscosity[i] = GetDouble(key);
+	break;
+      }
+      
+      case 1:
+      {
+	break;
+      }
+      
+      default:
+      {
+	InputError("Invalid switch value <%s> for key <%s>", switch_name, key);
+      }
+    }
+  } // num_phases
 
   (problem->contaminant_degradation) = ctalloc(double, num_contaminants);
 
@@ -204,11 +230,14 @@ Problem   *NewProblem(
   ProblemSpecStorage(problem) =
     PFModuleNewModule(SpecStorage, ());   //sk
 
-  ProblemXSlope(problem) =
-    PFModuleNewModule(XSlope, ());   //sk
+  if (solver != ImpesSolve)
+  {
+    ProblemXSlope(problem) =
+      PFModuleNewModule(XSlope, ());   //sk
 
-  ProblemYSlope(problem) =
-    PFModuleNewModule(YSlope, ());   //sk
+    ProblemYSlope(problem) =
+      PFModuleNewModule(YSlope, ());   //sk
+  }
 
   ProblemXChannelWidth(problem) =
     PFModuleNewModule(XChannelWidth, ());
@@ -216,8 +245,11 @@ Problem   *NewProblem(
   ProblemYChannelWidth(problem) =
     PFModuleNewModule(YChannelWidth, ());
 
-  ProblemMannings(problem) =
-    PFModuleNewModule(Mannings, ());   //sk
+  if (solver != ImpesSolve)
+  {
+    ProblemMannings(problem) =
+      PFModuleNewModule(Mannings, ());   //sk
+  }
 
   ProblemdzScale(problem) =
     PFModuleNewModule(dzScale, ()); //RMM

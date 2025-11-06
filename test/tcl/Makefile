@@ -31,6 +31,7 @@ testclean:
 	@rm -f *.sa
 	@rm -f *.log
 	@rm -f *.out.timing.csv
+	@rm -f *.out.input_errors.txt
 	@rm -f .hostfile
 	@rm -f .amps.*
 	@rm -f *.out.pftcl

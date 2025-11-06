@@ -969,6 +969,37 @@ void _HBT_printf(
   }
 }
 
+
+/*===========================================================================*/
+/* Visit HBT.  Recursive.                                                    */
+/*===========================================================================*/
+int _HBT_or_visit(
+		  FILE *file,
+		  int (*visitor)(FILE *, void *),
+		  HBT_element *tree)
+{
+  int ret = FALSE;
+  
+  if (tree != NULL)
+  {
+    ret |= _HBT_or_visit(file, visitor, tree->left);
+    
+    ret |= (*visitor)(file, tree->obj);
+    
+    ret |= _HBT_or_visit(file, visitor, tree->right);
+  }
+
+  return ret;
+}
+
+int HBT_or_visit(
+		  FILE *file,
+		  int (*visitor)(FILE *, void *),
+		  HBT * tree)
+{
+  return _HBT_or_visit(file, visitor, tree->root);
+}
+
 /*===========================================================================*/
 /* Print the current contents of the tree.                                   */
 /*===========================================================================*/

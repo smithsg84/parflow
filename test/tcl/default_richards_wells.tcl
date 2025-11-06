@@ -156,16 +156,6 @@ pfset Phase.water.Viscosity.Type	Constant
 pfset Phase.water.Viscosity.Value	1.0
 
 #-----------------------------------------------------------------------------
-# Contaminants
-#-----------------------------------------------------------------------------
-pfset Contaminants.Names			""
-
-#-----------------------------------------------------------------------------
-# Retardation
-#-----------------------------------------------------------------------------
-pfset Geom.Retardation.GeomNames           ""
-
-#-----------------------------------------------------------------------------
 # Gravity
 #-----------------------------------------------------------------------------
 
@@ -232,7 +222,6 @@ pfset Wells.pumping_well.ZLower                 2.00
 pfset Wells.pumping_well.Method                 Standard
 pfset Wells.pumping_well.Cycle                  "constant"
 pfset Wells.pumping_well.alltime.Pressure.Value      0.5
-pfset Wells.pumping_well.alltime.Saturation.water.Value 1.0
 
 #-----------------------------------------------------------------------------
 # Time Cycles
@@ -280,7 +269,7 @@ pfset Patch.top.BCPressure.alltime.Value		0.0
 #---------------------------------------------------------
 
 pfset TopoSlopesX.Type "Constant"
-pfset TopoSlopesX.GeomNames ""
+pfset TopoSlopesX.GeomNames "domain"
 
 pfset TopoSlopesX.Geom.domain.Value 0.0
 
@@ -289,7 +278,7 @@ pfset TopoSlopesX.Geom.domain.Value 0.0
 #---------------------------------------------------------
 
 pfset TopoSlopesY.Type "Constant"
-pfset TopoSlopesY.GeomNames ""
+pfset TopoSlopesY.GeomNames "domain"
 
 pfset TopoSlopesY.Geom.domain.Value 0.0
 
@@ -298,7 +287,7 @@ pfset TopoSlopesY.Geom.domain.Value 0.0
 #---------------------------------------------------------
 
 pfset Mannings.Type "Constant"
-pfset Mannings.GeomNames ""
+pfset Mannings.GeomNames "domain"
 pfset Mannings.Geom.domain.Value 0.
 
 #---------------------------------------------------------
