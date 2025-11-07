@@ -9,6 +9,8 @@ add_executable(parflow ${MAIN_SRC})
 
 target_link_libraries(parflow pfsimulator)
 
+target_link_libraries(parflow argparse)
+
 if( ${PARFLOW_HAVE_ETRACE} )
   target_include_directories(parflow PUBLIC "../third_party/etrace")
   target_link_libraries(parflow etrace)
@@ -35,8 +37,7 @@ if (${PARFLOW_HAVE_SUNDIALS})
 endif (${PARFLOW_HAVE_SUNDIALS})
 
 if (${PARFLOW_HAVE_MPI})
-  # In CMake 3.13 this could be target_link_options
-  target_link_libraries(parflow ${MPI_LINK_FLAGS})
+  target_link_options(parflow PUBLIC ${MPI_LINK_FLAGS})
   target_link_libraries (parflow ${MPI_LIBRARIES})
 endif (${PARFLOW_HAVE_MPI})
 
@@ -79,7 +80,7 @@ endif (${PARFLOW_HAVE_SLURM})
 # Link the math library if needed
 if(PARFLOW_MATH_LIBRARY)
     target_link_libraries(parflow ${MATH_LIBRARY})
-endif()
+  endif()
 
 if( ${PARFLOW_ENABLE_PROFILING} )
   set_target_properties(parflow PROPERTIES LINK_FLAGS ${PARFLOW_PROFILE_OPTS})
@@ -87,6 +88,6 @@ endif( ${PARFLOW_ENABLE_PROFILING} )
 
 if ( DEFINED PARFLOW_LINKER_FLAGS)
    set_target_properties(parflow PROPERTIES LINK_FLAGS ${PARFLOW_LINKER_FLAGS})
-endif ( DEFINED PARFLOW_LINKER_FLAGS)
+ endif ( DEFINED PARFLOW_LINKER_FLAGS)
 
 install(TARGETS parflow DESTINATION bin)

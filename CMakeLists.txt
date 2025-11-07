@@ -10,6 +10,7 @@ set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/m
 set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_C_STANDARD 11)
 
+include(ExternalProject)
 include (CheckCCompilerFlag)
 include (CheckCXXCompilerFlag)
 

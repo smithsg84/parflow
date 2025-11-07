@@ -35,6 +35,8 @@
 #include "amps.h"
 #include "fgetopt.h"  /* getopt replacement since getopt is not available on Windows */
 
+#include "argparse.h"
+
 #ifdef HAVE_SAMRAI
 #include "SAMRAI/SAMRAI_config.h"
 
