@@ -6502,23 +6502,32 @@ SolverRichards()
   Vector *saturation_out;
 
   SetupRichards(this_module);
-  
+
   if(TRUE)
   {
     char filename[2048];
     sprintf(filename, "%s.input_errors.txt", GlobalsOutFileName);
     
     FILE* file = fopen(filename, "w");
-    
-    int check_usage = IDB_CheckUsage(file, amps_ThreadLocal(input_database));
-    
-    fclose(file);
-    
-    if (check_usage)
+
+    int failed_check = IDB_CheckUsage(file, amps_ThreadLocal(input_database));
+
+    if (failed_check)
     {
-      InputError("Error: Issues found in the problem setup. Check the file \"%s\" for issues\n", filename, "");
-      exit(-1);
+      if (amps_ThreadLocal(input_database) -> halt_on_failed_check)
+      {
+	InputError("Error: Issues found in the problem setup. Check the file \"%s\" for issues\n", filename, "");
+      }
+      else
+      {
+	if (!amps_Rank(amps_CommWorld))
+	{
+	  amps_Printf("Warning: Issues found in the problem setup. Check the file \"%s\" for issues\n", filename, "");
+	}
+      }
     }
+
+    fclose(file);
   }
   
   AdvanceRichards(this_module,

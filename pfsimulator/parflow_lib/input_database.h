@@ -55,10 +55,15 @@ typedef struct _IDB_Entry {
 } IDB_Entry;
 
 /**
- * The input database type.  Currently uses a HBT (height balanced tree) for
+ * The input database type.
+ *
+ * Currently uses a HBT (height balanced tree) for
  * storage.
  */
-typedef HBT IDB;
+typedef struct _IDB { 
+  HBT *hbt; /* The HBT for storing the input database */
+  bool halt_on_failed_check; /* Flag to halt in IDB_CheckUsage failure */
+} IDB;
 
 /**
  * NameArray is a specialized string array used in ParFlow input parsing.
@@ -123,9 +128,10 @@ IDB_Entry *IDB_NewEntry(char *key, char *value);
  * A return of NULL indicates and error occurred while reading the database.
  *
  * @param filename The name of the input file containing the database [IN]
+ * @param halt_on_failed_check When true if checks fail in call to IDB_CheckUsage is called halt execution [IN]
  * @return The database
  */
-IDB *IDB_NewDB(char *filename);
+IDB *IDB_NewDB(char *filename, bool halt_on_failed_check);
 
 /**
  * Frees up the input database.
@@ -293,7 +299,7 @@ int NA_Sizeof(NameArray name_array);
 /**
  * I/O wrapper for InputErrors.
  *
- * Intent of this isto avoid having the rank and repeated all over.
+ * Only writes from Rank 0.
  */
 void InputError(const char *format, const char *s1, const char *s2);
 

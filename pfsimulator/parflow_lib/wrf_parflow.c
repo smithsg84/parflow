@@ -34,7 +34,9 @@
 #include "parflow.h"
 #include "solver.h"
 
+
 #include <string.h>
+#include <stdbool.h>
 
 amps_ThreadLocalDcl(PFModule *, Solver_module);
 amps_ThreadLocalDcl(PFModule *, solver);
@@ -64,7 +66,7 @@ void wrfparflowinit_(char *input_file)
   /*-----------------------------------------------------------------------
    * Read the Users Input Deck
    *-----------------------------------------------------------------------*/
-  amps_ThreadLocal(input_database) = IDB_NewDB(GlobalsInFileName);
+  amps_ThreadLocal(input_database) = IDB_NewDB(GlobalsInFileName, false);
 
   /*-----------------------------------------------------------------------
    * Setup log printing

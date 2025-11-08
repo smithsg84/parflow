@@ -198,14 +198,19 @@ int main(int argc, char *argv [])
     int restore_num = 0;
     int c;
     char * input_name = NULL;
+    bool input_checks = false;
 
     opterr = 0;
-    while ((c = getopt(argc, argv, "v")) != -1)
+    while ((c = getopt(argc, argv, "vc")) != -1)
       switch (c)
       {
         case 'v':
           PrintVersionInfo(stdout);
           return 0;
+          break;
+	  
+        case 'c':
+	  input_checks = true;
           break;
 
         case '?':
@@ -367,7 +372,7 @@ int main(int argc, char *argv [])
      * Read the Users Input Deck
      *-----------------------------------------------------------------------*/
 
-    amps_ThreadLocal(input_database) = IDB_NewDB(GlobalsInFileName);
+    amps_ThreadLocal(input_database) = IDB_NewDB(GlobalsInFileName, input_checks);
 
     /*-----------------------------------------------------------------------
      * Setup log printing

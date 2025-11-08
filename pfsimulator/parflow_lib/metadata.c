@@ -228,7 +228,7 @@ static cJSON* cJSON_CreateIDBDict(IDB* info, int onlyUsed)
 {
   cJSON* dict = cJSON_CreateObject();
 
-  cJSON_AddIDBEntries(dict, info->root, onlyUsed);
+  cJSON_AddIDBEntries(dict, info->hbt->root, onlyUsed);
   return dict;
 }
 

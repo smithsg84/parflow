@@ -72,7 +72,7 @@ void cplparflowinit_(int *  fcom,
   /*-----------------------------------------------------------------------
    * Read the Users Input Deck
    *-----------------------------------------------------------------------*/
-  amps_ThreadLocal(input_database) = IDB_NewDB(GlobalsInFileName);
+  amps_ThreadLocal(input_database) = IDB_NewDB(GlobalsInFileName, false);
 
   /*-----------------------------------------------------------------------
    * Setup log printing

@@ -73,7 +73,7 @@ IDB_Entry *IDB_NewEntry(char *key, char *value)
   return a;
 }
 
-IDB *IDB_NewDB(char *filename)
+IDB *IDB_NewDB(char *filename,  bool halt_on_failed_check)
 {
   int num_entries;
   amps_Invoice invoice;
@@ -92,11 +92,14 @@ IDB *IDB_NewDB(char *filename)
   amps_File file;
 
   /* Initialize the db structure */
-  db = (IDB*)HBT_new(IDB_Compare,
-                     IDB_Free,
-                     IDB_Print,
-                     NULL,
-                     0);
+  db = calloc(1, sizeof(IDB));
+
+  db->halt_on_failed_check = halt_on_failed_check;
+  db->hbt = HBT_new(IDB_Compare,
+		   IDB_Free,
+		   IDB_Print,
+		   NULL,
+		   0);
 
   if ((file = amps_SFopen(filename, "r")) == NULL)
   {
@@ -131,7 +134,7 @@ IDB *IDB_NewDB(char *filename)
     entry = IDB_NewEntry(key, value);
 
     /* Insert into the height balanced tree */
-    HBT_insert(db, entry, 0);
+    HBT_insert(db->hbt, entry, 0);
   }
 
   amps_FreeInvoice(invoice);
@@ -143,12 +146,14 @@ IDB *IDB_NewDB(char *filename)
 
 void IDB_FreeDB(IDB *database)
 {
-  HBT_free(database);
+  HBT_free(database->hbt);
+  free(database);
+  database = NULL;
 }
 
 void IDB_PrintUsage(FILE *file, IDB *database)
 {
-  HBT_printf(file, database);
+  HBT_printf(file, database -> hbt);
 }
 
 
@@ -167,7 +172,7 @@ int IDB_CheckEntry(FILE *file, void *obj)
 
 int IDB_CheckUsage(FILE *file, IDB *database)
 {
-  return HBT_or_visit(file, IDB_CheckEntry, database);
+  return HBT_or_visit(file, IDB_CheckEntry, database->hbt);
 }
 
 char *IDB_GetString(IDB *database, const char *key)
@@ -177,7 +182,7 @@ char *IDB_GetString(IDB *database, const char *key)
 
   lookup_entry.key = (char*)key;
 
-  result = (IDB_Entry*)HBT_lookup(database, &lookup_entry);
+  result = (IDB_Entry*)HBT_lookup(database->hbt, &lookup_entry);
 
   if (result)
   {
@@ -201,7 +206,7 @@ char *IDB_GetStringDefault(IDB *       database,
 
   lookup_entry.key = (char*)key;
 
-  result = (IDB_Entry*)HBT_lookup(database, &lookup_entry);
+  result = (IDB_Entry*)HBT_lookup(database->hbt, &lookup_entry);
 
   if (result)
   {
@@ -215,7 +220,7 @@ char *IDB_GetStringDefault(IDB *       database,
     entry->used = 1;
 
     /* Insert into the height balanced tree */
-    HBT_insert(database, entry, 0);
+    HBT_insert(database->hbt, entry, 0);
 
     return default_value;
   }
@@ -231,7 +236,7 @@ double IDB_GetDoubleDefault(IDB *       database,
 
   lookup_entry.key = (char*)key;
 
-  result = (IDB_Entry*)HBT_lookup(database, &lookup_entry);
+  result = (IDB_Entry*)HBT_lookup(database->hbt, &lookup_entry);
 
   if (result)
   {
@@ -258,7 +263,7 @@ double IDB_GetDoubleDefault(IDB *       database,
     entry->used = 1;
 
     /* Insert into the height balanced tree */
-    HBT_insert(database, entry, 0);
+    HBT_insert(database->hbt, entry, 0);
 
     return default_value;
   }
@@ -272,7 +277,7 @@ double IDB_GetDouble(IDB *database, const char *key)
 
   lookup_entry.key = (char*)key;
 
-  result = (IDB_Entry*)HBT_lookup(database, &lookup_entry);
+  result = (IDB_Entry*)HBT_lookup(database->hbt, &lookup_entry);
 
   if (result)
   {
@@ -303,7 +308,7 @@ int IDB_GetIntDefault(IDB *       database,
 
   lookup_entry.key = (char*)key;
 
-  result = (IDB_Entry*)HBT_lookup(database, &lookup_entry);
+  result = (IDB_Entry*)HBT_lookup(database->hbt, &lookup_entry);
 
   if (result)
   {
@@ -331,7 +336,7 @@ int IDB_GetIntDefault(IDB *       database,
     entry->used = 1;
 
     /* Insert into the height balanced tree */
-    HBT_insert(database, entry, 0);
+    HBT_insert(database->hbt, entry, 0);
 
     return default_value;
   }
@@ -345,7 +350,7 @@ int IDB_GetInt(IDB *database, const char *key)
 
   lookup_entry.key = (char*)key;
 
-  result = (IDB_Entry*)HBT_lookup(database, &lookup_entry);
+  result = (IDB_Entry*)HBT_lookup(database->hbt, &lookup_entry);
 
   if (result)
   {
