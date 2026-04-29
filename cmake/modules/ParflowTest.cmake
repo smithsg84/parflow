@@ -15,6 +15,10 @@
 # For sequential tests set topology to 1 1 1
 #
 function(pf_add_parallel_test inputfile topology)
+    if(NOT PARFLOW_HAVE_TCL)
+        return()
+    endif()
+
     string(REGEX REPLACE "/\.tcl" "" testname ${inputfile})
     string(REGEX REPLACE " " "_" postfix ${topology})
 
@@ -63,6 +67,10 @@ endfunction()
 # inputfile is the TCL script that defines the test.
 #
 function(pf_add_sequential_test inputfile)
+    if(NOT PARFLOW_HAVE_TCL)
+        return()
+    endif()
+
     string(REGEX REPLACE "/\.tcl" "" testname ${inputfile})
 
     list(APPEND args ${inputfile})
@@ -106,6 +114,10 @@ endfunction()
 # inputfile is the TCL script that defines the test.
 #
 function(pf_add_amps_parallel_test test ranks loops)
+    if(NOT PARFLOW_HAVE_TCL)
+        return()
+    endif()
+
     set(testname amps-${test}-${ranks}-${loops})
 
     add_test(

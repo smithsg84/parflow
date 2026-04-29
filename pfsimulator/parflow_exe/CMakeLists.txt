@@ -36,7 +36,8 @@ if(${PARFLOW_HAVE_SUNDIALS})
 endif(${PARFLOW_HAVE_SUNDIALS})
 
 if(${PARFLOW_HAVE_MPI})
-    target_link_options(parflow PUBLIC ${MPI_LINK_FLAGS})
+    # In CMake 3.13 this could be target_link_options
+    target_link_libraries(parflow ${MPI_LINK_FLAGS})
     target_link_libraries(parflow ${MPI_LIBRARIES})
 endif(${PARFLOW_HAVE_MPI})
 
