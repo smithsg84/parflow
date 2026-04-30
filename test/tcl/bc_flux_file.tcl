@@ -153,11 +153,6 @@ pfset Phase.water.Viscosity.Value	1.0
 pfset Contaminants.Names			""
 
 #-----------------------------------------------------------------------------
-# Retardation
-#-----------------------------------------------------------------------------
-pfset Geom.Retardation.GeomNames           ""
-
-#-----------------------------------------------------------------------------
 # Gravity
 #-----------------------------------------------------------------------------
 
@@ -280,7 +275,7 @@ pfset Patch.top.BCPressure.alltime.FileName           $flux_filename
 #---------------------------------------------------------
 
 pfset TopoSlopesX.Type "Constant"
-pfset TopoSlopesX.GeomNames ""
+pfset TopoSlopesX.GeomNames "domain"
 
 pfset TopoSlopesX.Geom.domain.Value 0.0
 
@@ -289,7 +284,7 @@ pfset TopoSlopesX.Geom.domain.Value 0.0
 #---------------------------------------------------------
 
 pfset TopoSlopesY.Type "Constant"
-pfset TopoSlopesY.GeomNames ""
+pfset TopoSlopesY.GeomNames "domain"
 
 pfset TopoSlopesY.Geom.domain.Value 0.0
 
@@ -298,7 +293,7 @@ pfset TopoSlopesY.Geom.domain.Value 0.0
 #---------------------------------------------------------
 
 pfset Mannings.Type "Constant"
-pfset Mannings.GeomNames ""
+pfset Mannings.GeomNames "domain"
 pfset Mannings.Geom.domain.Value 0.
 
 #---------------------------------------------------------
@@ -343,8 +338,6 @@ pfset Solver.Nonlinear.DerivativeEpsilon                 1e-2
 pfset Solver.Linear.KrylovDimension                      10
 
 pfset Solver.Linear.Preconditioner                       PFMG 
-pfset Solver.Linear.Preconditioner.MGSemi.MaxIter        1
-pfset Solver.Linear.Preconditioner.MGSemi.MaxLevels      100
 
 pfset Solver.PrintVelocities True
 

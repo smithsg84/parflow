@@ -86,25 +86,6 @@ pfset Geom.Perm.Names                 "domain"
 pfset Geom.domain.Perm.Type            Constant
 pfset Geom.domain.Perm.Value         0.1
 
-#pfset Geom.domain.Perm.Type "TurnBands"
-pfset Geom.domain.Perm.LambdaX  5000.0
-pfset Geom.domain.Perm.LambdaY  5000.0
-pfset Geom.domain.Perm.LambdaZ  50.0
-pfset Geom.domain.Perm.GeomMean  0.0001427686
-#pfset Geom.domain.Perm.GeomMean  0.001427686
-
-pfset Geom.domain.Perm.Sigma   0.20
-pfset Geom.domain.Perm.Sigma   1.20
-#pfset Geom.domain.Perm.Sigma   0.48989794
-pfset Geom.domain.Perm.NumLines 150
-pfset Geom.domain.Perm.RZeta  10.0
-pfset Geom.domain.Perm.KMax  100.0000001
-pfset Geom.domain.Perm.DelK  0.2
-pfset Geom.domain.Perm.Seed  33333
-pfset Geom.domain.Perm.LogNormal Log
-pfset Geom.domain.Perm.StratType Bottom
-
-
 pfset Perm.TensorType               TensorByGeom
 
 pfset Geom.Perm.TensorByGeom.Names  "domain"
@@ -139,12 +120,6 @@ pfset Phase.water.Viscosity.Value	1.0
 #-----------------------------------------------------------------------------
 
 pfset Contaminants.Names			""
-
-#-----------------------------------------------------------------------------
-# Retardation
-#-----------------------------------------------------------------------------
-
-pfset Geom.Retardation.GeomNames           ""
 
 #-----------------------------------------------------------------------------
 # Gravity
@@ -214,19 +189,10 @@ pfset Wells.Names                           ""
 #-----------------------------------------------------------------------------
 # Time Cycles
 #-----------------------------------------------------------------------------
-pfset Cycle.Names "constant rainrec"
 pfset Cycle.Names "constant"
 pfset Cycle.constant.Names              "alltime"
 pfset Cycle.constant.alltime.Length      10000000
 pfset Cycle.constant.Repeat             -1
-
-# rainfall and recession time periods are defined here
-# rain for 1 hour, recession for 2 hours
-
-pfset Cycle.rainrec.Names                 "rain rec"
-pfset Cycle.rainrec.rain.Length           10
-pfset Cycle.rainrec.rec.Length            20
-pfset Cycle.rainrec.Repeat                14
 
 #-----------------------------------------------------------------------------
 # Boundary Conditions: Pressure
@@ -273,18 +239,13 @@ file copy -force ../input/lw.1km.slope_y.10x.pfb .
 #---------------------------------------------------------
 
 pfset TopoSlopesX.Type "PFBFile"
-pfset TopoSlopesX.GeomNames "domain"
-
 pfset TopoSlopesX.FileName lw.1km.slope_x.10x.pfb
-
 
 #---------------------------------------------------------
 # Topo slopes in y-direction
 #---------------------------------------------------------
 
 pfset TopoSlopesY.Type "PFBFile"
-pfset TopoSlopesY.GeomNames "domain"
-
 pfset TopoSlopesY.FileName lw.1km.slope_y.10x.pfb
 
 #---------
@@ -336,12 +297,6 @@ pfset Solver.TerrainFollowingGrid                        True
 pfset Solver.Nonlinear.MaxIter                           80
 pfset Solver.Nonlinear.ResidualTol                       1e-5
 pfset Solver.Nonlinear.EtaValue                          0.001
-
-
-pfset Solver.PrintSubsurf				False
-pfset  Solver.Drop                                      1E-20
-pfset Solver.AbsTol                                     1E-10
-
 
 pfset Solver.Nonlinear.EtaChoice                         EtaConstant
 pfset Solver.Nonlinear.EtaValue                          0.001

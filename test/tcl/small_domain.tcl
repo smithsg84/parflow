@@ -115,14 +115,6 @@ pfset Phase.water.Viscosity.Value	1.0
 
 pfset Contaminants.Names			""
 
-
-#-----------------------------------------------------------------------------
-# Retardation
-#-----------------------------------------------------------------------------
-
-pfset Geom.Retardation.GeomNames           ""
-
-
 #-----------------------------------------------------------------------------
 # Gravity
 #-----------------------------------------------------------------------------
@@ -205,7 +197,6 @@ pfset BCPressure.PatchNames                   [pfget Geom.domain.Patches]
 pfset Patch.infiltration.BCPressure.Type	      FluxConst
 pfset Patch.infiltration.BCPressure.Cycle	      "constant"
 pfset Patch.infiltration.BCPressure.alltime.Value     	-0.10
-pfset Patch.infiltration.BCPressure.off.Value     	0.0
 
 pfset Patch.x-lower.BCPressure.Type		      FluxConst
 pfset Patch.x-lower.BCPressure.Cycle		      "constant"
@@ -236,7 +227,7 @@ pfset Patch.z-upper.BCPressure.alltime.Value	      0.0
 #---------------------------------------------------------
 
 pfset TopoSlopesX.Type "Constant"
-pfset TopoSlopesX.GeomNames ""
+pfset TopoSlopesX.GeomNames "domain"
 
 pfset TopoSlopesX.Geom.domain.Value 0.0
 
@@ -245,7 +236,7 @@ pfset TopoSlopesX.Geom.domain.Value 0.0
 #---------------------------------------------------------
 
 pfset TopoSlopesY.Type "Constant"
-pfset TopoSlopesY.GeomNames ""
+pfset TopoSlopesY.GeomNames "domain"
 
 pfset TopoSlopesY.Geom.domain.Value 0.0
 
@@ -254,7 +245,7 @@ pfset TopoSlopesY.Geom.domain.Value 0.0
 #---------------------------------------------------------
 
 pfset Mannings.Type "Constant"
-pfset Mannings.GeomNames ""
+pfset Mannings.GeomNames "domain"
 pfset Mannings.Geom.domain.Value 0.
 
 #---------------------------------------------------------
@@ -267,10 +258,6 @@ pfset ICPressure.GeomNames                              "domain"
 pfset Geom.domain.ICPressure.Value                      1.0
 pfset Geom.domain.ICPressure.RefPatch                  z-lower
 pfset Geom.domain.ICPressure.RefGeom                  domain
-
-pfset Geom.infiltration.ICPressure.Value                      10.0
-pfset Geom.infiltration.ICPressure.RefPatch                  infiltration
-pfset Geom.infiltration.ICPressure.RefGeom                  domain
 
 #-----------------------------------------------------------------------------
 # Phase sources:

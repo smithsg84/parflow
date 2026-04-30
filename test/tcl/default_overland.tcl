@@ -105,36 +105,36 @@ pfset Geom.Perm.Names                 "left right channel"
 # the following is ignored if the perm.type "Constant" settings are not
 # commented out, below.
 
-pfset Geom.left.Perm.Type "TurnBands"
-pfset Geom.left.Perm.LambdaX  50.
-pfset Geom.left.Perm.LambdaY  50.
-pfset Geom.left.Perm.LambdaZ  0.5
-pfset Geom.left.Perm.GeomMean  0.01
+# pfset Geom.left.Perm.Type "TurnBands"
+# pfset Geom.left.Perm.LambdaX  50.
+# pfset Geom.left.Perm.LambdaY  50.
+# pfset Geom.left.Perm.LambdaZ  0.5
+# pfset Geom.left.Perm.GeomMean  0.01
 
-pfset Geom.left.Perm.Sigma   0.5
-pfset Geom.left.Perm.NumLines 40
-pfset Geom.left.Perm.RZeta  5.0
-pfset Geom.left.Perm.KMax  100.0
-pfset Geom.left.Perm.DelK  0.2
-pfset Geom.left.Perm.Seed  33333
-pfset Geom.left.Perm.LogNormal Log
-pfset Geom.left.Perm.StratType Bottom
+# pfset Geom.left.Perm.Sigma   0.5
+# pfset Geom.left.Perm.NumLines 40
+# pfset Geom.left.Perm.RZeta  5.0
+# pfset Geom.left.Perm.KMax  100.0
+# pfset Geom.left.Perm.DelK  0.2
+# pfset Geom.left.Perm.Seed  33333
+# pfset Geom.left.Perm.LogNormal Log
+# pfset Geom.left.Perm.StratType Bottom
 
 
-pfset Geom.right.Perm.Type "TurnBands"
-pfset Geom.right.Perm.LambdaX  50.
-pfset Geom.right.Perm.LambdaY  50.
-pfset Geom.right.Perm.LambdaZ  0.5
-pfset Geom.right.Perm.GeomMean  0.05
+# pfset Geom.right.Perm.Type "TurnBands"
+# pfset Geom.right.Perm.LambdaX  50.
+# pfset Geom.right.Perm.LambdaY  50.
+# pfset Geom.right.Perm.LambdaZ  0.5
+# pfset Geom.right.Perm.GeomMean  0.05
 
-pfset Geom.right.Perm.Sigma   0.5
-pfset Geom.right.Perm.NumLines 40
-pfset Geom.right.Perm.RZeta  5.0
-pfset Geom.right.Perm.KMax  100.0
-pfset Geom.right.Perm.DelK  0.2
-pfset Geom.right.Perm.Seed  13333
-pfset Geom.right.Perm.LogNormal Log
-pfset Geom.right.Perm.StratType Bottom
+# pfset Geom.right.Perm.Sigma   0.5
+# pfset Geom.right.Perm.NumLines 40
+# pfset Geom.right.Perm.RZeta  5.0
+# pfset Geom.right.Perm.KMax  100.0
+# pfset Geom.right.Perm.DelK  0.2
+# pfset Geom.right.Perm.Seed  13333
+# pfset Geom.right.Perm.LogNormal Log
+# pfset Geom.right.Perm.StratType Bottom
 
 # hydraulic conductivity is very low, but not zero, top node will have to saturate
 # before overland flow can begin and will be driven by hortonian flow
@@ -185,12 +185,6 @@ pfset Phase.water.Viscosity.Value	1.0
 #-----------------------------------------------------------------------------
 
 pfset Contaminants.Names			""
-
-#-----------------------------------------------------------------------------
-# Retardation
-#-----------------------------------------------------------------------------
-
-pfset Geom.Retardation.GeomNames           ""
 
 #-----------------------------------------------------------------------------
 # Gravity
@@ -370,12 +364,8 @@ pfset Solver.Nonlinear.DerivativeEpsilon                 1e-8
 pfset Solver.Nonlinear.StepTol				 1e-20
 pfset Solver.Nonlinear.Globalization                     LineSearch
 pfset Solver.Linear.KrylovDimension                      20
-pfset Solver.Linear.MaxRestart                           2
 
 pfset Solver.Linear.Preconditioner                       PFMGOctree
-pfset Solver.PrintSubsurf				False
-pfset  Solver.Drop                                      1E-20
-pfset Solver.AbsTol                                     1E-9
  
 pfset Solver.WriteSiloSubsurfData True
 pfset Solver.WriteSiloPressure True

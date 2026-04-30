@@ -89,12 +89,6 @@ pfset Geom.background.Perm.TensorValX  1.0
 pfset Geom.background.Perm.TensorValY  1.0
 pfset Geom.background.Perm.TensorValZ  1.0
 
-# kf-Zone
-
-pfset Geom.kfzone.Perm.Type     Constant
-pfset Geom.kfzone.Perm.Value    40
-
-
 #-----------------------------------------------------------------------------
 # Specific Storage
 #-----------------------------------------------------------------------------
@@ -119,11 +113,6 @@ pfset Phase.water.Viscosity.Value	1.0
 # Contaminants
 #-----------------------------------------------------------------------------
 pfset Contaminants.Names			""
-
-#-----------------------------------------------------------------------------
-# Retardation
-#-----------------------------------------------------------------------------
-pfset Geom.Retardation.GeomNames           ""
 
 #-----------------------------------------------------------------------------
 # Gravity
@@ -231,7 +220,7 @@ pfset Patch.top.BCPressure.alltime.Value		0.0
 #---------------------------------------------------------
 
 pfset TopoSlopesX.Type "Constant"
-pfset TopoSlopesX.GeomNames ""
+pfset TopoSlopesX.GeomNames "domain"
 
 pfset TopoSlopesX.Geom.domain.Value 0.0
 
@@ -240,7 +229,7 @@ pfset TopoSlopesX.Geom.domain.Value 0.0
 #---------------------------------------------------------
 
 pfset TopoSlopesY.Type "Constant"
-pfset TopoSlopesY.GeomNames ""
+pfset TopoSlopesY.GeomNames "domain"
 
 pfset TopoSlopesY.Geom.domain.Value 0.0
 
@@ -249,7 +238,7 @@ pfset TopoSlopesY.Geom.domain.Value 0.0
 #---------------------------------------------------------
 
 pfset Mannings.Type "Constant"
-pfset Mannings.GeomNames ""
+pfset Mannings.GeomNames "domain"
 pfset Mannings.Geom.domain.Value 0.
 
 #---------------------------------------------------------
