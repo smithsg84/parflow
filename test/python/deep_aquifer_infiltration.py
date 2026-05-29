@@ -265,9 +265,9 @@ test.Solver = "Richards"
 test.Solver.MaxIter = 100000
 
 test.Solver.Nonlinear.MaxIter = 1000
-test.Solver.Nonlinear.ResidualTol = 1e-8
+test.Solver.Nonlinear.ResidualTol = 1e-12
 test.Solver.Nonlinear.EtaChoice = "EtaConstant"
-test.Solver.Nonlinear.EtaValue = 1e-12
+test.Solver.Nonlinear.EtaValue = 0.001
 test.Solver.Nonlinear.UseJacobian = True
 test.Solver.Nonlinear.StepTol = 1e-16
 
