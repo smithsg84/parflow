@@ -310,16 +310,14 @@ vtk_path="box_100x100x5_rotated_45.vtk"
 
 import vtk
 
-# Create a 100x100x5 box
+# Create a 50x50x0.05 Box
 cube = vtk.vtkCubeSource()
-cube.SetXLength(100.0)
-cube.SetYLength(100.0)
-cube.SetZLength(5.0)
+cube.SetBounds(-25.0, 25.0, -25.0, 25.0, -0.025, 0.025)
 cube.Update()
 
 # Rotate the cube 45 degrees about Z
 transform = vtk.vtkTransform()
-transform.RotateZ(45.0)
+transform.RotateZ(45)
 
 transform_filter = vtk.vtkTransformPolyDataFilter()
 transform_filter.SetTransform(transform)
@@ -333,7 +331,7 @@ bounds = poly.GetBounds()
 xmin, xmax, ymin, ymax, zmin, zmax = bounds
 
 shift = vtk.vtkTransform()
-shift.Translate(-xmin + 1.0, -ymin + 1.0, -zmin + 1.0)
+shift.Translate(-xmin, -ymin, -zmin)
 
 shift_filter = vtk.vtkTransformPolyDataFilter()
 shift_filter.SetTransform(shift)
@@ -344,6 +342,7 @@ poly = shift_filter.GetOutput()
 
 # Recompute bounds after shift
 bounds = poly.GetBounds()
+print(f"bounds = {bounds}")
 zmin, zmax = bounds[4], bounds[5]
 eps = 1e-6
 
@@ -358,8 +357,13 @@ for i in range(poly.GetNumberOfCells()):
     zsum = 0.0
     for j in range(cell.GetNumberOfPoints()):
         pid = cell.GetPointId(j)
+        print(f"poly.GetPoint = {poly.GetPoint(pid)}")
         zsum += poly.GetPoint(pid)[2]
+
+    print(f"zsum={zsum}")        
     zavg = zsum / cell.GetNumberOfPoints()
+
+    print(f"zavg={zavg}")
 
     if abs(zavg - zmax) < eps:
         patch_index.SetValue(i, 0)  # +Z
