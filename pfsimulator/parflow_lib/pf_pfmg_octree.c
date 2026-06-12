@@ -538,6 +538,8 @@ PFModule  *PFMGOctreeInitInstanceXtra(
             set_box = hypre_BoxCreate(PARFLOW_HYPRE_DIM);
             hypre_BoxSetExtents(set_box, ilo, ihi);
 
+	    printf("SGS set_box 1 (%d, %d, %d) (%d, %d, %d)\n", ilo[0], ilo[1], ilo[2], ihi[0], ihi[1], ihi[2]);
+
             /* IMF: commented print statement
              * amps_Printf("hypre symm matrix value box : %d (%d, %d, %d) (%d, %d, %d)\n", PV_l,
              *          ilo[0], ilo[1], ilo[2], ihi[0], ihi[1], ihi[2]);
@@ -588,6 +590,8 @@ PFModule  *PFMGOctreeInitInstanceXtra(
           ihi[0] = ilo[0] + nx - 1;
           ihi[1] = ilo[1] + ny - 1;
           ihi[2] = ilo[2] + nz - 1;
+
+	  printf("SGS set_box 2 (%d, %d, %d) (%d, %d, %d)\n", ilo[0], ilo[1], ilo[2], ihi[0], ihi[1], ihi[2]);
 
           value_box = hypre_BoxCreate(PARFLOW_HYPRE_DIM);
           hypre_BoxSetExtents(value_box, ilo, ihi);
@@ -706,6 +710,8 @@ PFModule  *PFMGOctreeInitInstanceXtra(
 
             set_box = hypre_BoxCreate(PARFLOW_HYPRE_DIM);
             hypre_BoxSetExtents(set_box, ilo, ihi);
+
+	    printf("SGS set_box 3 (%d, %d, %d) (%d, %d, %d)\n", ilo[0], ilo[1], ilo[2], ihi[0], ihi[1], ihi[2]);
 
             /* IMF: commented print statement
              * amps_Printf("hypre symm matrix value box : %d (%d, %d, %d) (%d, %d, %d)\n", PV_l,
