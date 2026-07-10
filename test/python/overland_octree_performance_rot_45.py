@@ -179,9 +179,9 @@ overland.Solver.Drop = 1e-20
 overland.Solver.AbsTol = 1e-10
 
 overland.Solver.WriteSiloSubsurfData = False
-overland.Solver.WriteSiloPressure = True
+overland.Solver.WriteSiloPressure = False
 overland.Solver.WriteSiloSlopes = False
-overland.Solver.WriteSiloSaturation = True
+overland.Solver.WriteSiloSaturation = False
 overland.Solver.WriteSiloConcentration = False
 
 overland.Solver.PrintQxOverland = True

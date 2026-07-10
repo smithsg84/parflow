@@ -1,64 +1,66 @@
 include(ParflowTest)
 
 set(TESTS
+    LW_surface_press
+    crater2D
+    crater2D_vangtable_linear
+    crater2D_vangtable_spline
+    default_richards_wells
     default_single
     default_single_read_porosity
-    default_richards_wells
     forsyth2
     harvey_flow
     harvey_flow_pgs
-    crater2D
-    crater2D_vangtable_spline
-    crater2D_vangtable_linear
-    small_domain
-    richards_hydrostatic_equilibrium
     indicator_field
-    LW_surface_press
     overland_tiltedV_MGSemiTest
+    richards_hydrostatic_equilibrium
+    small_domain
 )
 
 if(${PARFLOW_HAVE_HYPRE})
     list(
         APPEND TESTS
-        bc_pressure_file
-        bc_flux_file
         Dirichlet
-        default_richards
-        default_richards_restart
-        default_richards_nocluster
-        default_overland
-        octree-simple
-        octree-large-domain
         LW_var_dz
         LW_var_dz_spinup
-        terrain_following_grid_overland
-        var_dz_1D
-        var_dz_with_well
-        tilted_v_with_reservoir_overland_flow
-        tilted_v_with_reservoir_overland_kinematic
-        pfmg
-        pfmg_galerkin
-        smg
-        pfmg_octree
-        van-genuchten-file
+        bc_flux_file
+        bc_pressure_file
+        channelwidth
+        default_overland
+        default_richards
+        default_richards_nocluster
+        default_richards_restart
+        octree-large-domain
+        octree-simple
+        overland_FlatICP
         overland_flux
+        overland_octree_performance_rot_0
+        overland_octree_performance_rot_45
+        overland_slopingslab_DWE
         overland_slopingslab_KWE
+        overland_tiltedV_DWE
         overland_tiltedV_KWE
         overland_tiltedV_KWE_top_patch
         overland_tiltedV_KWE_top_patch_2
         overland_tiltedV_KWE_top_patch_3
-        overland_slopingslab_DWE
-        overland_tiltedV_DWE
-        overland_FlatICP
+        pfmg
+        pfmg_galerkin
+        pfmg_octree
         richards_FBx
         richards_FBy
         richards_box_proctest
         richards_box_proctest_vardz
-        water_balance_y
+        smg
+        terrain_following_grid_overland
+        tilted_v_with_reservoir_overland_flow
+        tilted_v_with_reservoir_overland_kinematic
+        van-genuchten-file
+        var_dz_1D
+        var_dz_with_well
         water_balance_x
-        water_balance_x.hardflow.nojac
         water_balance_x.hardflow.jac
-        channelwidth
+        water_balance_x.hardflow.nojac
+        water_balance_y
     )
 endif()
 
