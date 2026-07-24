@@ -11,27 +11,22 @@ from parflow.tools.io import read_pfb
 from parflow.tools.compare import pf_test_file_with_abs
 import math
 
-#run_name = "overland_octree_performance_rot_0"
 run_name = "overland_octree_performance_rot_45"
+overland = Run(run_name, __file__)
+
+overland.FileVersion = 4
+
+inputs_dir = get_absolute_path("../../test/input")
 
 run_dir = get_absolute_path(f"test_output/{run_name}")
 mkdir(run_dir)
 
-inputs_dir = get_absolute_path(".")
-
-solid_path = "box_100x100x5_rotated_45.pfsol"
 angle=math.pi/4
-#solid_path = "box_100x100x5_rotated_0.pfsol"
-#angle=0
+solid_path = f"{inputs_dir}/box_100x100x5_rotated_45.pfsol"
 
 slope_mag = 0.01
 
-solid_full_path = f"{inputs_dir}/{solid_path}"
-cp(solid_full_path, run_dir)
-
-overland = Run(run_name, __file__)
-
-overland.FileVersion = 4
+#overland.UseClustering = False
 
 overland.Process.Topology.P = 1
 overland.Process.Topology.Q = 1
@@ -204,9 +199,6 @@ overland.TopoSlopesX.Geom.domain.Value = slope_mag * math.cos(angle-math.pi/4)
 overland.TopoSlopesY.Type = "Constant"
 overland.TopoSlopesY.GeomNames = "domain"
 overland.TopoSlopesY.Geom.domain.Value = slope_mag * math.sin(angle-math.pi/4)
-
-print(f"Slope X = {overland.TopoSlopesX.Geom.domain.Value}")
-print(f"Slope Y = {overland.TopoSlopesY.Geom.domain.Value}")
 
 correct_output_dir = get_absolute_path("../correct_output")
 
