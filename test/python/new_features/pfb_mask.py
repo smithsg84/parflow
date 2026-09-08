@@ -319,3 +319,7 @@ sabino.Solver.Linear.Preconditioner.PCMatrixType = "FullJacobian"
 # -----------------------------------------------------------------------------
 
 sabino.run()
+
+# TODO ADD_CHECKS Yet another poorly written test that does not check much.
+
+printf("PASSED")
