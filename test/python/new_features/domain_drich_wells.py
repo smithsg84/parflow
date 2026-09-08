@@ -381,5 +381,3 @@ with open(get_absolute_path("drich_wells_build.yaml")) as new, open(
     else:
         print("Files are different")
         passed = False
-
-        

@@ -155,11 +155,10 @@ with open(generatedFile) as new, open(
         print("Files are the same")
     else:
         print("Files are different")
-        passed=False
+        passed = False
 
 if passed:
     print(f"{run_name} : PASSED")
 else:
     print(f"{run_name} : FAILED")
     sys.exit(1)
-        

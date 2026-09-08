@@ -6,7 +6,7 @@ import sys
 from parflow import Run
 from parflow.tools.fs import get_absolute_path
 
-run_name="dsingle"
+run_name = "dsingle"
 dsingle = Run(run_name, __file__)
 
 dsingle.pfset(
@@ -36,4 +36,3 @@ if passed:
 else:
     print(f"{run_name} : FAILED")
     sys.exit(1)
-        

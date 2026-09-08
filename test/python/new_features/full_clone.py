@@ -7,7 +7,7 @@ import os
 from parflow import Run
 from parflow.tools.fs import get_absolute_path
 
-run_name="full_clone"
+run_name = "full_clone"
 test = Run(run_name, __file__)
 
 test.pfset(
@@ -36,4 +36,3 @@ if passed:
 else:
     print(f"{run_name} : FAILED")
     sys.exit(1)
-        

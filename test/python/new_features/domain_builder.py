@@ -10,7 +10,7 @@ from parflow import Run
 from parflow.tools.fs import get_absolute_path
 from parflow.tools.builders import DomainBuilder
 
-run_name="drich"
+run_name = "drich"
 drich = Run(run_name, __file__)
 
 # ---------------------------------------------------------
@@ -170,4 +170,3 @@ if passed:
 else:
     print(f"{run_name} : FAILED")
     sys.exit(1)
-        

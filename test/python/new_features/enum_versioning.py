@@ -7,7 +7,7 @@ import sys
 from parflow import Run
 from parflow.tools.settings import set_parflow_version
 
-run_name="overland_FlatICP"
+run_name = "overland_FlatICP"
 overland_FlatICP = Run(run_name, __file__)
 
 # ---------------------------------------------------------

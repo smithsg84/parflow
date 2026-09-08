@@ -7,7 +7,7 @@ from parflow import Run
 from parflow.tools.fs import get_absolute_path
 from parflow.tools.builders import SubsurfacePropertiesBuilder
 
-run_name="LW_Test"
+run_name = "LW_Test"
 LW_Test = Run(run_name, __file__)
 
 LW_Test.FileVersion = 4
@@ -331,11 +331,14 @@ def test_subsurface_table(file_name):
 # Comparing written key/value pairs
 # -----------------------------------------------------------------------------
 
-passed=True
+passed = True
+
 
 def test_output(file_name):
-    new_filename=get_absolute_path(f"{file_name}.yaml")
-    correct_filename=get_absolute_path(f"$PF_SRC/test/correct_output/LW_test_ref.yaml.ref")
+    new_filename = get_absolute_path(f"{file_name}.yaml")
+    correct_filename = get_absolute_path(
+        f"$PF_SRC/test/correct_output/LW_test_ref.yaml.ref"
+    )
     LW_Test.write(file_name, file_format="yaml")
     with open(new_filename) as new, open(correct_filename) as ref:
         if new.read() == ref.read():
@@ -354,7 +357,7 @@ LW_Test.write_subsurface_table("inline_input.txt")
 test_subsurface_table("inline_input.txt")
 
 if not test_output("inline_input_yaml"):
-    passed=False
+    passed = False
 print("")
 
 # resetting properties to zero
@@ -364,7 +367,7 @@ SubsurfacePropertiesBuilder(LW_Test).load_csv_file(
     "$PF_SRC/test/input/LW_test_data_clear.csv"
 ).apply()
 if test_output("clear_yaml"):  # should fail
-    passed=False
+    passed = False
 print("+" * 40)
 print("")
 
@@ -376,7 +379,7 @@ SubsurfacePropertiesBuilder(LW_Test).load_csv_file(
 print("+" * 40)
 print("Comparing csv file to ref:")
 if not test_output("csv_input_yaml"):
-    passed=False
+    passed = False
 print("+" * 40)
 print("")
 
@@ -386,7 +389,7 @@ SubsurfacePropertiesBuilder(LW_Test).load_csv_file(
     "$PF_SRC/test/input/LW_test_data_clear.csv"
 ).apply()
 if test_output("clear_yaml"):  # should fail
-    passed=False
+    passed = False
 print("+" * 40)
 print("")
 
@@ -398,7 +401,7 @@ SubsurfacePropertiesBuilder(LW_Test).load_txt_file(
 print("+" * 40)
 print("Comparing txt file to ref:")
 if not test_output("txt_input_yaml"):
-    passed=False
+    passed = False
 print("+" * 40)
 
 # resetting properties to zero
@@ -407,7 +410,7 @@ SubsurfacePropertiesBuilder(LW_Test).load_csv_file(
     "$PF_SRC/test/input/LW_test_data_clear.csv"
 ).apply()
 if test_output("clear_yaml"):  # should fail
-    passed=False    
+    passed = False
 print("+" * 40)
 print("")
 
@@ -419,7 +422,7 @@ SubsurfacePropertiesBuilder(LW_Test).load_txt_file(
 print("+" * 40)
 print("Comparing transposed txt file to ref:")
 if not test_output("trasnposed_txt_input_yaml"):
-    passed=False        
+    passed = False
 print("+" * 40)
 
 if passed:
@@ -427,4 +430,3 @@ if passed:
 else:
     print(f"{run_name} : FAILED")
     sys.exit(1)
-

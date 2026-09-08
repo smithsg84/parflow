@@ -405,6 +405,6 @@ if not np.array_equal(data_wcx, ones_array) or not np.array_equal(data_wcy, ones
     print(f"{run_name} : FAILED")
     sys.exit(1)
 else:
-    print(f"{run_name} : PASSED")    
+    print(f"{run_name} : PASSED")
 
 # Do same checks as in constant case (read wc_y & y and check they are right)
