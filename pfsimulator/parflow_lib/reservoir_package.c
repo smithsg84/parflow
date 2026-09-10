@@ -549,7 +549,6 @@ void  ReservoirPackageFreePublicXtra()
       tfree(public_xtra->type);
 
       tfree(dummy0);
-
     }
     tfree(public_xtra);
   }

@@ -508,7 +508,7 @@ void     Godunov(
               total_volume += dt * flux * cell_volume;
             });
           }
-	  FreeSubgrid(tmp_subgrid);        /* done with temporary subgrid */
+          FreeSubgrid(tmp_subgrid);        /* done with temporary subgrid */
         }
       }
 
