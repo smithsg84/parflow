@@ -8,7 +8,8 @@ from parflow.tools.fs import get_absolute_path
 from parflow.tools.io import load_patch_matrix_from_pfb_file
 from parflow.tools.builders import SolidFileBuilder
 
-sabino = Run("sabino", __file__)
+run_name = "sabino"
+sabino = Run(run_name, __file__)
 
 # -----------------------------------------------------------------------------
 # Set Processor topology
@@ -322,4 +323,4 @@ sabino.run()
 
 # TODO ADD_CHECKS Yet another poorly written test that does not check much.
 
-printf("PASSED")
+print(f"{run_name} : PASSED")

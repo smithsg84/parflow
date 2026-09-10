@@ -7,6 +7,7 @@ from parflow import Run
 from parflow.tools.fs import mkdir, get_absolute_path
 from parflow.tools.compare import pf_test_file
 import argparse
+import sys
 
 run_name = "default_overland_pfmg_octree_jac"
 dover = Run(run_name, __file__)
