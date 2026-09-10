@@ -3583,6 +3583,8 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
               }
             }
                          );
+
+	    FreeSubgrid(tmp_subgrid);
           }
         }
         if (ReservoirDataPhysicalHasSecondaryIntakeCell(reservoir_data_physical))
